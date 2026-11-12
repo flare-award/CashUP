@@ -29,7 +29,7 @@ export const PlinkoGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(25);
+  const [wager, setWager] = useState<number>(0.25);
   const [rows, setRows] = useState<PlinkoRowCount>(12);
   const [risk, setRisk] = useState<PlinkoRisk>('medium');
   const [isDropping, setIsDropping] = useState<boolean>(false);

@@ -104,7 +104,7 @@ export const DiceGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(30);
+  const [wager, setWager] = useState<number>(0.5);
   const [selectedBet, setSelectedBet] = useState<DiceBetType>('over7');
   const [die1, setDie1] = useState<number>(4);
   const [die2, setDie2] = useState<number>(5);

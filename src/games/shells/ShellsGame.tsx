@@ -28,7 +28,7 @@ export const ShellsGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(40);
+  const [wager, setWager] = useState<number>(0.5);
   const [difficulty, setDifficulty] = useState<ShellDifficulty>('easy');
   const [streakLevel, setStreakLevel] = useState<number>(0);
 

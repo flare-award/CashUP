@@ -29,7 +29,7 @@ export const HigherLowerGame: React.FC = () => {
     playSound,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(30);
+  const [wager, setWager] = useState<number>(0.5);
   const [roundId, setRoundId] = useState<string | null>(null);
   const [session, setSession] = useState<SavedHiLoState | null>(null);
 

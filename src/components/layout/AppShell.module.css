@@ -209,6 +209,30 @@
   color: var(--text-primary);
 }
 
+.currencySelect {
+  appearance: none;
+  margin-left: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface-subtle);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.currencySelect:hover,
+.currencySelect:focus {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  outline: none;
+}
+
 .deltaFloat {
   position: absolute;
   top: calc(100% + 4px);

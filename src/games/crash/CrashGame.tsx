@@ -16,7 +16,7 @@ export const CrashGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(30);
+  const [wager, setWager] = useState<number>(0.5);
   const [autoCashoutEnabled, setAutoCashoutEnabled] = useState<boolean>(true);
   const [autoTarget, setAutoTarget] = useState<number>(2.0);
 

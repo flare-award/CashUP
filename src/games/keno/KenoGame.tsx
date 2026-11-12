@@ -15,7 +15,7 @@ export const KenoGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(25);
+  const [wager, setWager] = useState<number>(0.25);
   const [selected, setSelected] = useState<number[]>([3, 7, 14, 21, 33]);
   const [revealedDrawn, setRevealedDrawn] = useState<number[]>([]);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);

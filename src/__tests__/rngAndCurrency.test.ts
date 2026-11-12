@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
+  convertBetweenCurrencies,
+  convertFromUsd,
+  convertToUsd,
   CURRENCIES,
   formatCurrency,
   formatSignedCurrency,
@@ -52,23 +55,44 @@ describe('Web Crypto Fair RNG', () => {
   });
 });
 
-describe('Virtual Currency Formatting (No Exchange Conversion)', () => {
-  it('preserves exact numeric value across RUB, MDL, USD, EUR, KZT, CNY', () => {
-    const codes: CurrencyCode[] = ['RUB', 'MDL', 'USD', 'EUR', 'KZT', 'CNY'];
-    const balance = 1000;
+describe('Balanced Multi-Currency Exchange Conversion ($10 USD Base)', () => {
+  it('converts $10 USD starter balance accurately into every supported currency', () => {
+    const starterUsd = 10;
+
+    expect(convertFromUsd(starterUsd, 'USD')).toBe(10);
+    expect(convertFromUsd(starterUsd, 'RUB')).toBe(960);
+    expect(convertFromUsd(starterUsd, 'EUR')).toBe(9.2);
+    expect(convertFromUsd(starterUsd, 'KZT')).toBe(4950);
+    expect(convertFromUsd(starterUsd, 'MDL')).toBe(178);
+    expect(convertFromUsd(starterUsd, 'CNY')).toBe(72.5);
+
+    expect(formatCurrency(starterUsd, 'USD')).toBe('$10');
+    expect(formatCurrency(starterUsd, 'RUB')).toContain('960');
+    expect(formatCurrency(starterUsd, 'RUB')).toContain(CURRENCIES.RUB.symbol);
+  });
+
+  it('maintains identical purchasing power and lossless round-trip across currency switches', () => {
+    const codes: CurrencyCode[] = ['USD', 'RUB', 'EUR', 'KZT', 'MDL', 'CNY'];
+    const baseUsd = 10;
 
     for (const code of codes) {
-      const formatted = formatCurrency(balance, code);
-      expect(formatted).toContain(CURRENCIES[code].symbol);
-      // Numeric digits must still represent 1 000 (not converted)
-      const digitsOnly = formatted.replace(/[^\d]/g, '');
-      expect(digitsOnly).toBe('1000');
+      const displayed = convertFromUsd(baseUsd, code);
+      const backToUsd = convertToUsd(displayed, code);
+      expect(Math.abs(backToUsd - baseUsd)).toBeLessThan(0.01);
     }
+
+    // Typing 500 KZT in KZT mode round-trips back to exact 500 KZT
+    const kztInUsd = convertToUsd(500, 'KZT');
+    expect(convertFromUsd(kztInUsd, 'KZT')).toBe(500);
+
+    // Chained conversions equal direct conversion
+    expect(convertBetweenCurrencies(960, 'RUB', 'USD')).toBe(10);
+    expect(convertBetweenCurrencies(10, 'USD', 'EUR')).toBe(9.2);
   });
 
   it('rounds floating-point drift and formats signed deltas', () => {
     expect(roundCurrency(0.1 + 0.2)).toBe(0.3);
-    expect(formatSignedCurrency(250, 'RUB')).toContain('+');
-    expect(formatSignedCurrency(-100, 'USD')).toContain('−$100');
+    expect(formatSignedCurrency(2.5, 'RUB')).toContain('+');
+    expect(formatSignedCurrency(-1.5, 'USD')).toContain('−$1,50');
   });
 });

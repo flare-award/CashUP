@@ -82,8 +82,8 @@ export const GameLayout: React.FC<GameLayoutProps> = ({ game, children }) => {
             </span>
           ))}
         </div>
-        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-          Все ставки используют исключительно виртуальные единицы
+        <span className="mono" style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+          Макс. множитель: {game.maxMultiplierLabel}
         </span>
       </div>
 

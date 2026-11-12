@@ -98,18 +98,20 @@
 }
 
 .chipBtn {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
+  min-width: 48px;
+  height: 40px;
+  padding: 0 11px;
+  border-radius: 999px;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
-  border: 2.5px dashed rgba(255, 255, 255, 0.35);
+  border: 2px dashed rgba(255, 255, 255, 0.35);
   background-color: var(--bg-surface-subtle);
   color: var(--text-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
   transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 

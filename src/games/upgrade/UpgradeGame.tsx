@@ -22,7 +22,7 @@ export const UpgradeGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(50);
+  const [wager, setWager] = useState<number>(0.5);
   const [targetMult, setTargetMult] = useState<number>(2);
   const [sectorMode, setSectorMode] = useState<UpgradeSectorMode>('start');
   const [isUpgrading, setIsUpgrading] = useState<boolean>(false);
@@ -307,7 +307,7 @@ export const UpgradeGame: React.FC = () => {
           wager={wager}
           onChange={setWager}
           disabled={isUpgrading}
-          label="Стоимость попытки (вирт.)"
+          label="Стоимость попытки"
         />
 
         <div>

@@ -1,8 +1,8 @@
 {
-  "name": "cashup-simulator",
+  "name": "cashup",
   "private": true,
-  "version": "1.0.0",
-  "description": "CashUP — Full-Scale Local Virtual Casino Simulator",
+  "version": "1.1.0",
+  "description": "CashUP — Мультивалютный игровой клуб (15 игр, статистика, JSON-сохранения)",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",

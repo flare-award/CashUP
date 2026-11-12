@@ -20,7 +20,7 @@ export const RedBlackGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(50);
+  const [wager, setWager] = useState<number>(0.5);
   const [choice, setChoice] = useState<RedBlackChoice>('red');
   const [currentCard, setCurrentCard] = useState<Card | null>(null);
   const [faceDown, setFaceDown] = useState<boolean>(true);

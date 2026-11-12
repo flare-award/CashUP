@@ -22,33 +22,44 @@ describe('CashUP End-to-End UI Integration', () => {
     window.localStorage.clear();
   });
 
-  it('onboards a new user on first launch, persists 1 000 starter balance, and does not duplicate bonus on reload', async () => {
-    const { unmount } = renderCashUp('/');
+  it('shows currency selection and live $10 converted preview at onboarding, persists once, and shows zero simulation disclaimers', async () => {
+    const { unmount, container } = renderCashUp('/');
 
-    // Onboarding modal is visible
     expect(screen.getByText('Добро пожаловать в CashUP')).toBeInTheDocument();
-    const input = screen.getByLabelText('Ваш никнейм');
-    fireEvent.change(input, { target: { value: 'Marat' } });
+    // Default currency is USD -> $10 preview
+    expect(screen.getAllByText('$10').length).toBeGreaterThan(0);
+
+    // Selecting RUB at onboarding previews 960 ₽ live!
+    fireEvent.click(screen.getByRole('radio', { name: /RUB \(₽\)/i }));
+    expect(screen.getAllByText(/960\s*₽/).length).toBeGreaterThan(0);
+
+    // Switch back to USD ($10) and create profile
+    fireEvent.click(screen.getByRole('radio', { name: /USD \(\$\)/i }));
+    fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
+      target: { value: 'Marat' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /Создать профиль и начать/i }));
 
     await waitFor(() => {
       expect(screen.getByText(/Привет, Marat!/i)).toBeInTheDocument();
     });
 
-    // Unmount and remount to simulate browser refresh
+    // No "виртуальн" or "Локальная симуляция" anywhere in DOM
+    expect(container.textContent).not.toMatch(/виртуальн/i);
+    expect(container.textContent).not.toMatch(/Локальная симуляция/i);
+
+    // Unmount and remount to verify starter bonus is never duplicated
     unmount();
     renderCashUp('/');
 
     expect(screen.queryByText('Добро пожаловать в CashUP')).not.toBeInTheDocument();
     expect(screen.getByText(/Привет, Marat!/i)).toBeInTheDocument();
-    // Balance remains 1 000 RUB, not 2 000
-    expect(screen.getAllByText(/1\s*000\s*₽/)[0]).toBeInTheDocument();
+    expect(screen.getAllByText('$10')[0]).toBeInTheDocument();
   });
 
-  it('switches themes, currencies, disables animations, and completes game rounds with history & stats updates', async () => {
+  it('converts balances accurately when switching currencies, switches themes, and disables animations', async () => {
     renderCashUp('/settings');
 
-    // Create profile first
     fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
       target: { value: 'TesterPro' },
     });
@@ -58,9 +69,12 @@ describe('CashUP End-to-End UI Integration', () => {
     fireEvent.click(screen.getByRole('button', { name: /Светлая тема/i }));
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
 
-    // Switch currency to USD ($) — numeric value stays 1 000!
-    fireEvent.click(screen.getByRole('button', { name: /USD \(\$\)/i }));
-    expect(screen.getAllByText(/\$1\s*000/)[0]).toBeInTheDocument();
+    // Switch currency from $10 USD to RUB (960 ₽) and KZT (4 950 ₸)
+    fireEvent.click(screen.getByRole('button', { name: /RUB \(₽\)/i }));
+    expect(screen.getAllByText(/960\s*₽/)[0]).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /KZT \(₸\)/i }));
+    expect(screen.getAllByText(/4\s*950\s*₸/)[0]).toBeInTheDocument();
 
     // Disable animations for instant round settlement
     const animCheckbox = screen.getByRole('checkbox', { name: /Игровые анимации/i });
@@ -68,8 +82,29 @@ describe('CashUP End-to-End UI Integration', () => {
     expect(document.documentElement.getAttribute('data-motion')).toBe('none');
   });
 
+  it('renders detailed partner advertisement showcases in sidebar and home page with interactive dossier modal', async () => {
+    const { container } = renderCashUp('/');
+    fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
+      target: { value: 'Collector' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Создать профиль и начать/i }));
+
+    // Ensure ad copy never breaks immersion by calling itself fake/fictional
+    expect(container.textContent).not.toMatch(/вымышлен/i);
+
+    // Click to open interactive luxury showcase modal
+    const detailButtons = screen.getAllByRole('button', {
+      name: /Открыть хронограф|Конфигуратор GT|Ноты композиции|Акустический стенд/i,
+    });
+    expect(detailButtons.length).toBeGreaterThan(0);
+    fireEvent.click(detailButtons[0]!);
+
+    await waitFor(() => {
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+  });
+
   it('renders every single one of the 15 registered games without console or render errors', () => {
-    // Seed profile via initial mount
     const first = renderCashUp('/');
     fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
       target: { value: 'AllGamesQA' },
@@ -95,7 +130,6 @@ describe('CashUP End-to-End UI Integration', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /Создать профиль и начать/i }));
 
-    // Turn off animations so setTimeout(0) resolves cleanly
     fireEvent.click(screen.getByRole('checkbox', { name: /Игровые анимации/i }));
     setup.unmount();
 
@@ -110,19 +144,17 @@ describe('CashUP End-to-End UI Integration', () => {
     );
     gameView.unmount();
 
-    // Verify History page shows the completed round link and summary
     const histView = renderCashUp('/history');
     expect(screen.getByRole('link', { name: 'Кости' })).toBeInTheDocument();
     expect(screen.getByText(/Раунды \(1\)/i)).toBeInTheDocument();
     histView.unmount();
 
-    // Verify Statistics page reflects 1 round played
     renderCashUp('/statistics');
     expect(screen.getByText('Сыграно раундов')).toBeInTheDocument();
   });
 
-  it('supports creating multiple local profiles and switching between isolated balances', async () => {
-    renderCashUp('/profile');
+  it('supports creating multiple profiles with currency preview and validates imported JSON saves', async () => {
+    const profView = renderCashUp('/profile');
     fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
       target: { value: 'FirstUser' },
     });
@@ -130,7 +162,6 @@ describe('CashUP End-to-End UI Integration', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: 'FirstUser' })).toBeInTheDocument();
 
-    // Open New Profile modal
     fireEvent.click(screen.getByRole('button', { name: /Новый профиль/i }));
     fireEvent.change(screen.getByLabelText('Никнейм нового профиля'), {
       target: { value: 'SecondUser' },
@@ -142,19 +173,13 @@ describe('CashUP End-to-End UI Integration', () => {
         screen.getByRole('heading', { level: 1, name: 'SecondUser' })
       ).toBeInTheDocument();
     });
-    expect(screen.getByText(/Локальные профили \(2\)/i)).toBeInTheDocument();
-  });
+    expect(screen.getByText(/Игровые профили \(2\)/i)).toBeInTheDocument();
+    profView.unmount();
 
-  it('validates imported JSON files on Settings page, rejects corrupted files, and restores valid saves', async () => {
+    // Settings JSON file import validation & restore
     renderCashUp('/settings');
-    fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
-      target: { value: 'TempUser' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: /Создать профиль и начать/i }));
-
     const fileInput = screen.getByTestId('save-file-input');
 
-    // 1. Corrupt JSON file -> shows error alert without breaking current profile
     const badFile = new File(['{not-valid-json'], 'broken.json', {
       type: 'application/json',
     });
@@ -167,10 +192,9 @@ describe('CashUP End-to-End UI Integration', () => {
       expect(screen.getByRole('alert')).toBeInTheDocument();
     });
 
-    // 2. Valid CashUP JSON save -> shows preview confirmation modal & restores profile
     const importedProfile = {
       ...createNewProfile('RestoredHero', 'royal-crown'),
-      balance: 7777,
+      balance: 77.5,
     };
     const validSaveJson = serializeSaveData({
       ...createInitialSaveData(),
@@ -197,7 +221,7 @@ describe('CashUP End-to-End UI Integration', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getAllByText(/7\s*777/)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/\$77,50/)[0]).toBeInTheDocument();
     });
   });
 });

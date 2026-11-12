@@ -1,8 +1,13 @@
 import React, { useRef, useState } from 'react';
-import { Sparkles, Upload } from 'lucide-react';
+import { Upload, Wallet } from 'lucide-react';
 import { STARTER_BALANCE } from '../../core/balance';
+import {
+  CURRENCY_LIST,
+  formatCurrency,
+  formatExchangeRateHint,
+} from '../../core/currency';
 import { useCashUp } from '../../state/CashUpContext';
-import { AvatarId } from '../../types';
+import { AvatarId, CurrencyCode } from '../../types';
 import { AVATAR_CATALOG, AvatarIcon } from '../ui/AvatarIcon';
 import { Modal } from '../ui/Modal';
 import styles from './OnboardingModal.module.css';
@@ -10,8 +15,8 @@ import styles from './OnboardingModal.module.css';
 export const OnboardingModal: React.FC = () => {
   const {
     state,
+    settings,
     createProfile,
-    formatAmount,
     validateImportText,
     applyImportedSave,
     playSound,
@@ -19,6 +24,9 @@ export const OnboardingModal: React.FC = () => {
 
   const [nickname, setNickname] = useState('');
   const [avatarId, setAvatarId] = useState<AvatarId>('emerald-diamond');
+  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>(
+    settings.currency ?? 'USD'
+  );
   const [importError, setImportError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -28,7 +36,7 @@ export const OnboardingModal: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const clean = nickname.trim() || 'Игрок';
-    createProfile(clean, avatarId);
+    createProfile(clean, avatarId, selectedCurrency);
     setNickname('');
   };
 
@@ -55,8 +63,9 @@ export const OnboardingModal: React.FC = () => {
     <Modal
       open={isOpen}
       title="Добро пожаловать в CashUP"
-      subtitle="Создайте локальный игровой профиль на вашем устройстве. Вся валюта полностью виртуальная и не имеет денежной стоимости."
+      subtitle="Настройте игровой профиль, выберите удобную валюту счёта и получите стартовый баланс."
       hideClose
+      wide
     >
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: 14 }}>
@@ -95,7 +104,11 @@ export const OnboardingModal: React.FC = () => {
           >
             Выберите аватар профиля
           </span>
-          <div className={styles.avatarGrid} role="radiogroup" aria-label="Аватар профиля">
+          <div
+            className={styles.avatarGrid}
+            role="radiogroup"
+            aria-label="Аватар профиля"
+          >
             {AVATAR_CATALOG.map((item) => {
               const selected = item.id === avatarId;
               return (
@@ -113,18 +126,72 @@ export const OnboardingModal: React.FC = () => {
                     setAvatarId(item.id);
                   }}
                 >
-                  <AvatarIcon avatarId={item.id} size={42} />
+                  <AvatarIcon avatarId={item.id} size={40} />
                 </button>
               );
             })}
           </div>
         </div>
 
-        <div className={styles.bonusNotice}>
-          <Sparkles size={18} style={{ color: 'var(--accent-primary)', flexShrink: 0, marginTop: 2 }} />
-          <div>
-            При создании нового профиля единоразово начисляется стартовый виртуальный баланс{' '}
-            <strong className="mono">{formatAmount(STARTER_BALANCE)}</strong>.
+        {/* Currency Selector + Live Starting Balance Preview */}
+        <div className={styles.currencySection}>
+          <span
+            style={{
+              display: 'block',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              color: 'var(--text-secondary)',
+            }}
+          >
+            Валюта счёта и стартовый баланс
+          </span>
+
+          <div className={styles.currencyLayout}>
+            <div
+              className={styles.currencyGrid}
+              role="radiogroup"
+              aria-label="Валюта счёта"
+            >
+              {CURRENCY_LIST.map((cur) => {
+                const active = cur.code === selectedCurrency;
+                return (
+                  <button
+                    key={cur.code}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    className={`${styles.currencyOption} ${
+                      active ? styles.currencySelected : ''
+                    }`}
+                    onClick={() => {
+                      playSound('click');
+                      setSelectedCurrency(cur.code);
+                    }}
+                  >
+                    <span className={styles.currTop}>
+                      {cur.code} ({cur.symbol})
+                    </span>
+                    <span className={styles.currSub}>{cur.nameRu}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className={styles.starterPreviewCard} aria-live="polite">
+              <div className={styles.previewCaption}>
+                <Wallet
+                  size={13}
+                  style={{ verticalAlign: '-2px', marginRight: 5 }}
+                />
+                Стартовый баланс
+              </div>
+              <div className={`${styles.previewValue} tabular`}>
+                {formatCurrency(STARTER_BALANCE, selectedCurrency)}
+              </div>
+              <div className={styles.previewRate}>
+                {formatExchangeRateHint(selectedCurrency)}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -133,7 +200,7 @@ export const OnboardingModal: React.FC = () => {
           className="btn btnPrimary btnLg"
           style={{ width: '100%', marginTop: 18 }}
         >
-          Создать профиль и начать
+          Создать профиль и начать ({formatCurrency(STARTER_BALANCE, selectedCurrency)})
         </button>
       </form>
 

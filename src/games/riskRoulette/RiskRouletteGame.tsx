@@ -39,7 +39,7 @@ export const RiskRouletteGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(40);
+  const [wager, setWager] = useState<number>(0.5);
   const [preset, setPreset] = useState<RiskPresetId>('moderate');
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const lockRef = useRef(false);

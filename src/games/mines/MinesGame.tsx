@@ -30,7 +30,7 @@ export const MinesGame: React.FC = () => {
     playSound,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(30);
+  const [wager, setWager] = useState<number>(0.5);
   const [gridSize, setGridSize] = useState<MinesGridSize>(5);
   const [mineCount, setMineCount] = useState<number>(3);
 

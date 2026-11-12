@@ -16,9 +16,14 @@ import {
   Wallet,
   X,
 } from 'lucide-react';
-import { CURRENCY_LIST, formatSignedCurrency } from '../../core/currency';
+import {
+  CURRENCY_LIST,
+  formatExchangeRateHint,
+  formatSignedCurrency,
+} from '../../core/currency';
 import { useCashUp } from '../../state/CashUpContext';
 import { CurrencyCode, GameId } from '../../types';
+import { PromoShowcase } from '../ads/PromoShowcase';
 import { AvatarIcon } from '../ui/AvatarIcon';
 import { ToastContainer } from '../ui/ToastContainer';
 import { OnboardingModal } from './OnboardingModal';
@@ -191,6 +196,10 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               ))}
             </div>
           )}
+
+          <div style={{ marginTop: 14 }}>
+            <PromoShowcase variant="sidebar" initialIndex={0} />
+          </div>
         </div>
 
         <div className={styles.sidebarFooter}>
@@ -202,10 +211,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
           >
             <Download size={15} /> Экспорт сохранения
           </button>
-          <div className={styles.simDisclaimer}>
-            <strong style={{ color: 'var(--text-secondary)' }}>100% виртуальный симулятор.</strong>{' '}
-            Игровые единицы не имеют денежной ценности, не покупаются и не выводятся.
-          </div>
         </div>
       </aside>
 
@@ -222,9 +227,9 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               <Menu size={20} />
             </button>
 
-            <div className={styles.virtualBadge} title="Локальный симулятор без реальных ставок">
+            <div className={styles.virtualBadge}>
               <span className={styles.virtualDot} />
-              <span>Виртуальная валюта · Локальный режим</span>
+              <span className="mono">{formatExchangeRateHint(settings.currency)}</span>
             </div>
           </div>
 
@@ -244,11 +249,11 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                     gap: 8,
                     textAlign: 'left',
                   }}
-                  aria-label="Виртуальный баланс и последние операции"
+                  aria-label="Баланс счёта и последние операции"
                 >
                   <Wallet size={17} style={{ color: 'var(--accent-primary)' }} />
                   <div>
-                    <span className={styles.balanceLabel}>Вирт. баланс</span>
+                    <span className={styles.balanceLabel}>Баланс</span>
                     <span className={`${styles.balanceValue} tabular`}>
                       {formatAmount(activeProfile?.balance ?? 0)}
                     </span>
@@ -256,7 +261,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                 </button>
 
                 <select
-                  aria-label="Отображаемая валюта"
+                  aria-label="Валюта счёта"
                   className={styles.currencySelect}
                   value={settings.currency}
                   onChange={(e) => {
@@ -294,7 +299,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                     }}
                   >
                     <strong style={{ fontSize: '0.9rem' }}>Последние операции</strong>
-                    <span className="badge badgeEmerald">Виртуально</span>
+                    <span className="badge badgeEmerald">{settings.currency}</span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 7, maxHeight: 240, overflowY: 'auto' }}>
@@ -409,7 +414,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                 {profileMenuOpen && (
                   <div className={styles.popover} role="dialog" aria-label="Выбор профиля">
                     <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 8 }}>
-                      Локальные профили ({state.profiles.length})
+                      Профили ({state.profiles.length})
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
                       {state.profiles.map((p) => {

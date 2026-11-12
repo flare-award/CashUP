@@ -12,6 +12,7 @@ import {
   beginGameRound,
   claimEmergencyVirtualRefill,
   createNewProfile,
+  EMERGENCY_REFILL_AMOUNT,
   settleGameRound,
   updateInteractiveRoundState,
 } from '../core/balance';
@@ -30,6 +31,7 @@ import {
   AppSettings,
   AvatarId,
   CashUpSaveData,
+  CurrencyCode,
   GameHistoryEntry,
   GameId,
   LastUiState,
@@ -78,7 +80,11 @@ export interface CashUpContextValue {
   prefersReducedMotion: boolean;
 
   // Profile actions
-  createProfile: (nickname: string, avatarId: AvatarId) => UserProfile;
+  createProfile: (
+    nickname: string,
+    avatarId: AvatarId,
+    initialCurrency?: CurrencyCode
+  ) => UserProfile;
   switchProfile: (profileId: string) => void;
   updateProfile: (profileId: string, nickname: string, avatarId: AvatarId) => void;
   deleteProfile: (profileId: string) => void;
@@ -262,14 +268,23 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, []);
 
   const createProfile = useCallback(
-    (nickname: string, avatarId: AvatarId): UserProfile => {
+    (
+      nickname: string,
+      avatarId: AvatarId,
+      initialCurrency?: CurrencyCode
+    ): UserProfile => {
       const cur = stateRef.current;
       const existingIds = cur.profiles.map((p) => p.id);
       const profile = createNewProfile(nickname, avatarId, existingIds);
+      const effectiveCurrency = initialCurrency ?? cur.settings.currency;
       const next: CashUpSaveData = {
         ...cur,
         activeProfileId: profile.id,
         profiles: [...cur.profiles, profile],
+        settings: {
+          ...cur.settings,
+          currency: effectiveCurrency,
+        },
       };
       commitState(next);
       soundEngine.play('select');
@@ -278,8 +293,8 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         title: `Профиль «${profile.nickname}» создан`,
         description: `Начислен стартовый баланс: ${formatCurrency(
           profile.balance,
-          cur.settings.currency
-        )} (виртуальные ед.).`,
+          effectiveCurrency
+        )}.`,
       });
       return profile;
     },
@@ -299,7 +314,7 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       notify({
         type: 'info',
         title: `Активный профиль: ${target.nickname}`,
-        description: `Текущий виртуальный баланс: ${formatCurrency(
+        description: `Текущий баланс: ${formatCurrency(
           target.balance,
           cur.settings.currency
         )}`,
@@ -572,12 +587,15 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return { ok: false, error: res.error };
     }
     replaceProfileInState(res.profile);
-    emitBalanceDelta(250);
+    emitBalanceDelta(EMERGENCY_REFILL_AMOUNT);
     soundEngine.play('win');
     notify({
       type: 'success',
-      title: 'Резервный виртуальный баланс начислен',
-      description: `Баланс пополнен на ${formatCurrency(250, stateRef.current.settings.currency)}.`,
+      title: 'Баланс пополнен',
+      description: `Счёт пополнен на ${formatCurrency(
+        EMERGENCY_REFILL_AMOUNT,
+        stateRef.current.settings.currency
+      )}.`,
     });
     return { ok: true };
   }, [replaceProfileInState, emitBalanceDelta, notify]);
@@ -635,7 +653,7 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     notify(
       {
         type: 'warning',
-        title: 'Весь локальный прогресс сброшен',
+        title: 'Весь прогресс сброшен',
         description: 'Создайте новый профиль или загрузите JSON-сохранение.',
       },
       true

@@ -2,16 +2,18 @@ import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Activity,
-  Bot,
   Download,
   Gamepad2,
+  Radio,
   Settings,
   ShieldCheck,
   TrendingUp,
   User,
 } from 'lucide-react';
+import { PromoShowcase } from '../components/ads/PromoShowcase';
 import { GameCard } from '../components/cards/GameCard';
 import { AvatarIcon } from '../components/ui/AvatarIcon';
+import { formatExchangeRateHint } from '../core/currency';
 import { formatNpcEventText } from '../core/npc';
 import { GAME_CATALOG } from '../games/registry';
 import { useCashUp } from '../state/CashUpContext';
@@ -41,9 +43,10 @@ export const HomePage: React.FC = () => {
   }, [activeProfile]);
 
   const recommendedGames = useMemo(
-    () => GAME_CATALOG.filter((g) => g.recommended && !g.featured).concat(
-      GAME_CATALOG.filter((g) => !g.featured && !g.recommended).slice(0, 2)
-    ).slice(0, 4),
+    () =>
+      GAME_CATALOG.filter((g) => g.recommended && !g.featured)
+        .concat(GAME_CATALOG.filter((g) => !g.featured && !g.recommended).slice(0, 2))
+        .slice(0, 4),
     []
   );
 
@@ -55,17 +58,17 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className={`${styles.page} pageEnter`}>
-      {/* 1–4 & 10: Greeting, CashUP branding, User Balance & Quick Profile/Settings Access */}
+      {/* Greeting, CashUP branding, User Balance & Quick Profile/Settings Access */}
       <section className={styles.hero} aria-label="Приветствие и сводка баланса">
         <div>
           <span className="badge badgeEmerald">
-            <ShieldCheck size={13} /> Локальный развлекательный симулятор CashUP
+            <ShieldCheck size={13} /> Игровой клуб CashUP · Честный Web Crypto RNG
           </span>
           <h1 className={styles.heroTitle}>
             Привет, {activeProfile?.nickname ?? 'Игрок'}!
           </h1>
           <p className={styles.heroDesc}>
-            Исследуйте 15 полноценных игровых механик в едином виртуальном зале. Все средства являются игровыми единицами без денежной стоимости, а ваш прогресс надёжно хранится локально и экспортируется в JSON.
+            Исследуйте 15 фирменных игровых залов с единым мультивалютным счётом, мгновенной конвертацией по курсу и сохранением истории в JSON.
           </p>
 
           <div className={styles.heroActions}>
@@ -96,13 +99,17 @@ export const HomePage: React.FC = () => {
         <div className={styles.heroBalanceCard}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-              Текущий виртуальный баланс
+              Текущий баланс счёта
             </span>
-            <span className="badge badgeGold">Виртуально · {settings.currency}</span>
+            <span className="badge badgeGold">{settings.currency}</span>
           </div>
 
           <div className={`${styles.heroBalanceAmount} tabular`}>
             {formatAmount(activeProfile?.balance ?? 0)}
+          </div>
+
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }} className="mono">
+            {formatExchangeRateHint(settings.currency)}
           </div>
 
           <div className={styles.quickLinksRow}>
@@ -124,7 +131,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. Последние сыгранные игры (если уже есть раунды) */}
+      {/* Последние сыгранные игры */}
       {recentPlayedGames.length > 0 && (
         <section aria-label="Последние сыгранные игры">
           <div className={styles.sectionHeader}>
@@ -141,7 +148,7 @@ export const HomePage: React.FC = () => {
         </section>
       )}
 
-      {/* 5. Популярные игры */}
+      {/* Популярные игры */}
       <section aria-label="Популярные игры">
         <div className={styles.sectionHeader}>
           <h2>Популярные игры</h2>
@@ -156,7 +163,10 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 7. Рекомендуемые игры */}
+      {/* Editorial Luxury Ad Showcase */}
+      <PromoShowcase variant="banner" initialIndex={1} />
+
+      {/* Рекомендуемые игры */}
       <section aria-label="Рекомендуемые игры">
         <div className={styles.sectionHeader}>
           <h2>Рекомендуемые механики</h2>
@@ -171,7 +181,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 8. Игровая статистика & 9. Лента недавних событий NPC */}
+      {/* Игровая статистика & Активность зала */}
       <div className={styles.bottomSplit}>
         <section className={styles.panelCard} aria-label="Игровая статистика">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -229,7 +239,7 @@ export const HomePage: React.FC = () => {
           )}
         </section>
 
-        <section className={styles.panelCard} aria-label="Лента событий локальных NPC">
+        <section className={styles.panelCard} aria-label="Прямой эфир зала">
           <div
             style={{
               display: 'flex',
@@ -240,12 +250,10 @@ export const HomePage: React.FC = () => {
             }}
           >
             <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              <Bot size={20} style={{ color: 'var(--accent-gold)' }} />
-              Активность зала
+              <Radio size={19} style={{ color: 'var(--accent-gold)' }} />
+              Прямой эфир зала
             </h2>
-            <span className="badge badgeNeutral" title="Все события генерируются локально ботами-симуляторами">
-              NPC · Локальная симуляция
-            </span>
+            <span className="badge badgeEmerald">LIVE</span>
           </div>
 
           <div className={styles.npcList}>
@@ -256,8 +264,8 @@ export const HomePage: React.FC = () => {
                   <div style={{ minWidth: 0 }}>
                     <div>
                       <strong>{ev.nickname}</strong>{' '}
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.73rem' }}>
-                        [NPC]
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>
+                        · {ev.styleLabel}
                       </span>
                     </div>
                     <div

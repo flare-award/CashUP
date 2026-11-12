@@ -4,9 +4,14 @@ import { Check, Edit3, Plus, Trash2, Users } from 'lucide-react';
 import { AVATAR_CATALOG, AvatarIcon } from '../components/ui/AvatarIcon';
 import { Modal } from '../components/ui/Modal';
 import { STARTER_BALANCE } from '../core/balance';
-import { formatSignedCurrency } from '../core/currency';
+import {
+  CURRENCY_LIST,
+  formatCurrency,
+  formatExchangeRateHint,
+  formatSignedCurrency,
+} from '../core/currency';
 import { useCashUp } from '../state/CashUpContext';
-import { AvatarId, UserProfile } from '../types';
+import { AvatarId, CurrencyCode, UserProfile } from '../types';
 
 export const ProfilePage: React.FC = () => {
   const {
@@ -28,6 +33,7 @@ export const ProfilePage: React.FC = () => {
   const [createOpen, setCreateOpen] = useState(false);
   const [newNickname, setNewNickname] = useState('');
   const [newAvatar, setNewAvatar] = useState<AvatarId>('royal-crown');
+  const [newCurrency, setNewCurrency] = useState<CurrencyCode>(settings.currency);
 
   const [deleteTarget, setDeleteTarget] = useState<UserProfile | null>(null);
 
@@ -49,7 +55,7 @@ export const ProfilePage: React.FC = () => {
 
   const handleCreateProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    createProfile(newNickname.trim() || 'Игрок', newAvatar);
+    createProfile(newNickname.trim() || 'Игрок', newAvatar, newCurrency);
     setNewNickname('');
     setCreateOpen(false);
   };
@@ -86,11 +92,11 @@ export const ProfilePage: React.FC = () => {
               <span className="badge badgeNeutral mono">ID: {activeProfile.id}</span>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.88rem', marginTop: 4 }}>
-              Локальный профиль создан: {createdFormatted}
+              Профиль создан: {createdFormatted}
             </p>
             <div style={{ marginTop: 8 }}>
               <span className="badge badgeEmerald">
-                Виртуальный баланс: {formatAmount(activeProfile.balance)}
+                Баланс счёта: {formatAmount(activeProfile.balance)}
               </span>
             </div>
           </div>
@@ -127,7 +133,7 @@ export const ProfilePage: React.FC = () => {
         }}
       >
         {[
-          { label: 'Текущий вирт. баланс', val: formatAmount(activeProfile.balance) },
+          { label: 'Текущий баланс', val: formatAmount(activeProfile.balance) },
           { label: 'Сыграно раундов', val: String(stats.totalRounds) },
           { label: 'Победы / Поражения', val: `${stats.wins} / ${stats.losses}` },
           {
@@ -190,7 +196,7 @@ export const ProfilePage: React.FC = () => {
           >
             <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
               <Users size={19} style={{ color: 'var(--accent-primary)' }} />
-              Локальные профили ({state.profiles.length})
+              Игровые профили ({state.profiles.length})
             </h2>
           </div>
 
@@ -344,7 +350,7 @@ export const ProfilePage: React.FC = () => {
       <Modal
         open={editOpen}
         title="Редактирование профиля"
-        subtitle="Измените локальный никнейм или аватар профиля."
+        subtitle="Измените никнейм или аватар вашего профиля."
         onClose={() => setEditOpen(false)}
       >
         <form onSubmit={handleSaveEdit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -409,7 +415,7 @@ export const ProfilePage: React.FC = () => {
       <Modal
         open={createOpen}
         title="Создание нового профиля"
-        subtitle={`Новому профилю единоразово выдаётся стартовый баланс ${formatAmount(STARTER_BALANCE)}.`}
+        subtitle={`Выберите аватар и валюту счёта — новому профилю начисляется стартовый баланс ${formatCurrency(STARTER_BALANCE, newCurrency)}.`}
         onClose={() => setCreateOpen(false)}
       >
         <form onSubmit={handleCreateProfile} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -454,6 +460,65 @@ export const ProfilePage: React.FC = () => {
             ))}
           </div>
 
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.3fr 1fr',
+              gap: 10,
+              alignItems: 'stretch',
+            }}
+          >
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+              {CURRENCY_LIST.map((cur) => (
+                <button
+                  key={cur.code}
+                  type="button"
+                  onClick={() => setNewCurrency(cur.code)}
+                  style={{
+                    padding: '6px 4px',
+                    borderRadius: 8,
+                    border: `1.5px solid ${
+                      newCurrency === cur.code
+                        ? 'var(--accent-primary)'
+                        : 'var(--border-subtle)'
+                    }`,
+                    backgroundColor:
+                      newCurrency === cur.code
+                        ? 'var(--accent-primary-soft)'
+                        : 'var(--bg-surface)',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.76rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  {cur.code} ({cur.symbol})
+                </button>
+              ))}
+            </div>
+
+            <div
+              style={{
+                padding: '10px 12px',
+                borderRadius: 10,
+                border: '1px solid var(--border-accent)',
+                backgroundColor: 'var(--accent-primary-soft)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
+            >
+              <span style={{ fontSize: '0.68rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+                Начальный баланс
+              </span>
+              <strong className="mono" style={{ fontSize: '1.2rem', color: 'var(--accent-primary)' }}>
+                {formatCurrency(STARTER_BALANCE, newCurrency)}
+              </strong>
+              <span className="mono" style={{ fontSize: '0.66rem', color: 'var(--text-muted)' }}>
+                {formatExchangeRateHint(newCurrency)}
+              </span>
+            </div>
+          </div>
+
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 6 }}>
             <button type="button" className="btn btnSecondary" onClick={() => setCreateOpen(false)}>
               Отмена
@@ -468,7 +533,7 @@ export const ProfilePage: React.FC = () => {
       {/* Delete Confirmation Modal */}
       <Modal
         open={Boolean(deleteTarget)}
-        title="Удалить локальный профиль?"
+        title="Удалить профиль?"
         subtitle="Вся статистика, баланс и история игр выбранного профиля будут безвозвратно удалены с устройства."
         onClose={() => setDeleteTarget(null)}
       >

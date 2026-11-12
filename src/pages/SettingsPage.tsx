@@ -12,7 +12,12 @@ import {
   Volume2,
 } from 'lucide-react';
 import { Modal } from '../components/ui/Modal';
-import { CURRENCY_LIST, formatCurrency } from '../core/currency';
+import { STARTER_BALANCE } from '../core/balance';
+import {
+  CURRENCY_LIST,
+  formatCurrency,
+  formatExchangeRateHint,
+} from '../core/currency';
 import { SavePreviewInfo } from '../core/saveSchema';
 import { useCashUp } from '../state/CashUpContext';
 import { AnimationIntensity, CashUpSaveData, CurrencyCode } from '../types';
@@ -83,7 +88,7 @@ export const SettingsPage: React.FC = () => {
     }
   };
 
-  const sampleAmount = activeProfile?.balance ?? 1000;
+  const sampleAmount = activeProfile?.balance ?? STARTER_BALANCE;
 
   return (
     <div className="pageEnter" style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
@@ -182,9 +187,9 @@ export const SettingsPage: React.FC = () => {
             gap: 14,
           }}
         >
-          <h2>Отображение виртуальной валюты</h2>
+          <h2>Валюта счёта и конвертация</h2>
           <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-            Изменяется только визуальный символ валюты — числовое значение виртуального баланса не пересчитывается по обменному курсу.
+            При смене валюты баланс, ставки, номиналы фишек и вся история автоматически пересчитываются по сбалансированному курсу.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
@@ -219,6 +224,9 @@ export const SettingsPage: React.FC = () => {
                   <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                     {cur.nameRu}
                   </span>
+                  <span className="mono" style={{ fontSize: '0.66rem', color: 'var(--accent-primary)' }}>
+                    {formatCurrency(sampleAmount, cur.code)}
+                  </span>
                 </button>
               );
             })}
@@ -232,9 +240,13 @@ export const SettingsPage: React.FC = () => {
               fontSize: '0.84rem',
               display: 'flex',
               justifyContent: 'space-between',
+              gap: 8,
+              flexWrap: 'wrap',
             }}
           >
-            <span style={{ color: 'var(--text-secondary)' }}>Предпросмотр баланса:</span>
+            <span style={{ color: 'var(--text-secondary)' }}>
+              Текущий баланс ({formatExchangeRateHint(settings.currency)}):
+            </span>
             <strong className="mono">
               {formatCurrency(sampleAmount, settings.currency)}
             </strong>
@@ -405,7 +417,7 @@ export const SettingsPage: React.FC = () => {
         >
           <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
             <Bell size={19} style={{ color: 'var(--accent-primary)' }} />
-            Уведомления и симуляция
+            Уведомления и эфир
           </h2>
 
           <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}>
@@ -434,7 +446,7 @@ export const SettingsPage: React.FC = () => {
           </label>
 
           <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}>
-            <span>Лента активности локальных NPC</span>
+            <span>Прямой эфир активности зала</span>
             <input
               type="checkbox"
               checked={settings.npcFeedEnabled}
@@ -445,9 +457,9 @@ export const SettingsPage: React.FC = () => {
         </section>
       </div>
 
-      {/* Section 3: JSON Save System (Critical Section 11) */}
+      {/* Section 3: JSON Save System */}
       <section
-        aria-label="Управление локальными JSON-сохранениями"
+        aria-label="Управление JSON-сохранениями"
         style={{
           backgroundColor: 'var(--bg-surface)',
           border: '1px solid var(--border-accent)',
@@ -460,11 +472,11 @@ export const SettingsPage: React.FC = () => {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <FileJson size={22} style={{ color: 'var(--accent-primary)' }} />
-          <h2>Управление локальными JSON-сохранениями</h2>
+          <h2>Управление JSON-сохранениями</h2>
         </div>
 
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', maxWidth: 780 }}>
-          CashUP не использует сторонних серверов и баз данных. Весь ваш прогресс (профили, виртуальные балансы, настройки, избранное, статистика и история игр) автоматически сохраняется локально и может быть экспортирован в независимый JSON-файл для переноса на любое другое устройство.
+          Весь ваш прогресс — профили, балансы, настройки, избранное, статистика и история раундов — автоматически сохраняется в браузере и может быть экспортирован в независимый JSON-файл для переноса между устройствами.
         </p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
@@ -528,7 +540,7 @@ export const SettingsPage: React.FC = () => {
       <Modal
         open={Boolean(pendingImport)}
         title="Подтверждение загрузки сохранения"
-        subtitle="Проверьте данные файла перед заменой текущего локального состояния."
+        subtitle="Проверьте данные файла перед заменой текущего сохранения."
         onClose={() => setPendingImport(null)}
         wide
       >
@@ -652,8 +664,8 @@ export const SettingsPage: React.FC = () => {
       {/* Reset All Progress Confirmation Modal */}
       <Modal
         open={resetConfirmOpen}
-        title="Сбросить весь локальный прогресс?"
-        subtitle="Все локальные профили, виртуальные балансы, история и статистика будут очищены."
+        title="Сбросить весь прогресс?"
+        subtitle="Все профили, балансы счетов, история и статистика будут очищены."
         onClose={() => setResetConfirmOpen(false)}
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

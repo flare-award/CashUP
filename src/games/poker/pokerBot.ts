@@ -122,7 +122,10 @@ export function decidePokerBotAction(
       const sizing = roundCurrency(
         Math.min(
           ctx.maxRaise,
-          Math.max(ctx.minRaise, Math.round(ctx.pot * (0.45 + ctx.aggression * 0.35)))
+          Math.max(
+            ctx.minRaise,
+            Math.round(ctx.pot * (0.45 + ctx.aggression * 0.35) * 100) / 100
+          )
         )
       );
       return { action: 'raise', callPart: 0, raiseExtra: sizing };
@@ -141,7 +144,10 @@ export function decidePokerBotAction(
     effectiveStrength >= raiseThreshold + 0.08
   ) {
     const extra = roundCurrency(
-      Math.min(ctx.maxRaise, Math.max(ctx.minRaise, Math.round(ctx.pot * 0.5)))
+      Math.min(
+        ctx.maxRaise,
+        Math.max(ctx.minRaise, Math.round(ctx.pot * 0.5 * 100) / 100)
+      )
     );
     return { action: 'raise', callPart: ctx.toCall, raiseExtra: extra };
   }

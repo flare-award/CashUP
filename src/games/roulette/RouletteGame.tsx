@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Play, RotateCcw, Trash2, Undo2 } from 'lucide-react';
-import { roundCurrency } from '../../core/currency';
+import { formatDisplayNumber, roundCurrency } from '../../core/currency';
 import { useCashUp } from '../../state/CashUpContext';
 import {
   computePotentialMaxPayout,
@@ -15,7 +15,7 @@ import {
 } from './rouletteLogic';
 import styles from './RouletteGame.module.css';
 
-const CHIP_VALUES = [10, 25, 50, 100, 250, 500] as const;
+const CHIP_VALUES = [0.1, 0.25, 0.5, 1, 2.5, 5] as const;
 const SLICE_DEG = 360 / 37;
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
@@ -50,6 +50,7 @@ function describeSector(
 export const RouletteGame: React.FC = () => {
   const {
     activeProfile,
+    settings,
     startPrecomputedRound,
     finishRound,
     formatAmount,
@@ -58,7 +59,7 @@ export const RouletteGame: React.FC = () => {
     notify,
   } = useCashUp();
 
-  const [selectedChip, setSelectedChip] = useState<number>(25);
+  const [selectedChip, setSelectedChip] = useState<number>(0.25);
   const [bets, setBets] = useState<RouletteBetMap>({});
   const [betStack, setBetStack] = useState<Array<{ key: RouletteBetKey; amount: number }>>([]);
   const [previousBets, setPreviousBets] = useState<RouletteBetMap | null>(null);
@@ -84,10 +85,10 @@ export const RouletteGame: React.FC = () => {
 
   const placeChip = (key: RouletteBetKey) => {
     if (isSpinning) return;
-    if (totalWager + selectedChip > balance) {
+    if (totalWager + selectedChip - balance > 0.00001) {
       notify({
         type: 'warning',
-        title: 'Недостаточно виртуальных средств',
+        title: 'Недостаточно средств',
         description: 'Уменьшите номинал фишки или очистите часть ставок.',
       });
       return;
@@ -244,7 +245,11 @@ export const RouletteGame: React.FC = () => {
   const renderChipBadge = (key: RouletteBetKey) => {
     const val = bets[key];
     if (!val || val <= 0) return null;
-    return <span className={styles.betChipBadge}>{val}</span>;
+    return (
+      <span className={styles.betChipBadge} title={formatAmount(val)}>
+        {formatDisplayNumber(val, settings.currency)}
+      </span>
+    );
   };
 
   return (
@@ -372,7 +377,7 @@ export const RouletteGame: React.FC = () => {
             </div>
           ) : (
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
-              Выберите номинал фишки и сделайте виртуальную ставку
+              Выберите номинал фишки и разместите ставку на поле
             </span>
           )}
         </div>
@@ -416,7 +421,7 @@ export const RouletteGame: React.FC = () => {
         <div className={styles.chipToolbar}>
           <div>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 6 }}>
-              Номинал виртуальной фишки
+              Номинал фишки
             </div>
             <div className={styles.chipRow} role="radiogroup" aria-label="Номинал фишки">
               {CHIP_VALUES.map((val) => (
@@ -434,7 +439,7 @@ export const RouletteGame: React.FC = () => {
                     setSelectedChip(val);
                   }}
                 >
-                  {val}
+                  {formatAmount(val)}
                 </button>
               ))}
             </div>

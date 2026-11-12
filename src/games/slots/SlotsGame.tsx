@@ -132,7 +132,7 @@ export const SlotsGame: React.FC = () => {
   } = useCashUp();
 
   const [mode, setMode] = useState<SlotReelMode>(3);
-  const [wager, setWager] = useState<number>(25);
+  const [wager, setWager] = useState<number>(0.25);
   const [isSpinning, setIsSpinning] = useState(false);
   const [leverPulled, setLeverPulled] = useState(false);
   const spinLockRef = useRef(false);

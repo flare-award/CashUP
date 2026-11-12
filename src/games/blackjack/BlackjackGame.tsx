@@ -34,7 +34,7 @@ export const BlackjackGame: React.FC = () => {
     playSound,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(50);
+  const [wager, setWager] = useState<number>(0.5);
   const [roundId, setRoundId] = useState<string | null>(null);
   const [table, setTable] = useState<SavedBlackjackState | null>(null);
 
@@ -450,7 +450,7 @@ export const BlackjackGame: React.FC = () => {
 
             {!table && (
               <div style={{ textAlign: 'center', color: '#cbd5e1', padding: '18px 0' }}>
-                Установите виртуальную ставку и нажмите «Раздать карты»
+                Установите ставку и нажмите «Раздать карты»
               </div>
             )}
           </div>

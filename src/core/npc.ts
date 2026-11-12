@@ -119,7 +119,7 @@ export function generateNpcActivity(now: Date = new Date()): NpcActivityItem {
   const roll = randomFloat();
 
   if (roll < 0.42) {
-    const baseAmounts = [150, 240, 380, 500, 750, 1200, 1850, 2500, 3400];
+    const baseAmounts = [1.5, 2.4, 3.8, 5.2, 8.5, 14.0, 22.5, 36.0, 58.0];
     const amount = baseAmounts[randomInt(0, baseAmounts.length - 1)]!;
     return {
       id: generateId('npc'),
@@ -174,10 +174,10 @@ export function generateInitialNpcFeed(count = 7): NpcActivityItem[] {
 
 export function formatNpcEventText(item: NpcActivityItem, currency: CurrencyCode): string {
   if (item.actionType === 'win' && item.amount !== undefined) {
-    return `выиграл виртуальные ${formatCurrency(item.amount, currency)} в ${item.gameName}`;
+    return `выиграл ${formatCurrency(item.amount, currency)} в ${item.gameName}`;
   }
   if (item.actionType === 'multiplier' && item.multiplier !== undefined) {
-    return `получил множитель x${item.multiplier} в ${item.gameName}`;
+    return `поймал множитель x${item.multiplier} в ${item.gameName}`;
   }
   return `сыграл раунд в ${item.gameName}`;
 }

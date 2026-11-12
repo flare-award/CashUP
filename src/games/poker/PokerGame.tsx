@@ -80,10 +80,10 @@ export const PokerGame: React.FC = () => {
     playSound,
   } = useCashUp();
 
-  const [ante, setAnte] = useState<number>(25);
+  const [ante, setAnte] = useState<number>(0.5);
   const [roundId, setRoundId] = useState<string | null>(null);
   const [hand, setHand] = useState<PokerHandState | null>(null);
-  const [raiseExtra, setRaiseExtra] = useState<number>(25);
+  const [raiseExtra, setRaiseExtra] = useState<number>(0.5);
 
   const balance = activeProfile?.balance ?? 0;
 
@@ -127,7 +127,7 @@ export const PokerGame: React.FC = () => {
       holeCards: [deck[2 + idx * 2]!, deck[3 + idx * 2]!],
       folded: false,
       streetBet: ante,
-      lastActionLabel: `Блайнд ${ante}`,
+      lastActionLabel: `Блайнд ${formatAmount(ante)}`,
     }));
     const fullCommunity = deck.slice(8, 13);
 
@@ -198,7 +198,7 @@ export const PokerGame: React.FC = () => {
       ? winners.length > 1
         ? `Раздел банка (${winningHandName}): +${formatAmount(payout)}`
         : `Вы выиграли банк ${formatAmount(payout)} с комбинацией «${winningHandName}»!`
-      : `Победил NPC ${winnerNames} с комбинацией «${winningHandName}»`;
+      : `Победил ${winnerNames} с комбинацией «${winningHandName}»`;
 
     const finalState: PokerHandState = {
       ...stateAtEnd,
@@ -289,7 +289,7 @@ export const PokerGame: React.FC = () => {
     };
 
     // If player has 0 remaining balance (all-in), automatically run out streets to showdown!
-    if ((activeProfile?.balance ?? 0) < 1) {
+    if ((activeProfile?.balance ?? 0) < 0.01) {
       resolveShowdown(rid, nextHand);
       return;
     }
@@ -351,7 +351,7 @@ export const PokerGame: React.FC = () => {
         return {
           ...bot,
           streetBet: roundCurrency(bot.streetBet + decision.amount),
-          lastActionLabel: `Колл ${decision.amount}`,
+          lastActionLabel: `Колл ${formatAmount(decision.amount)}`,
         };
       }
 
@@ -366,7 +366,7 @@ export const PokerGame: React.FC = () => {
         return {
           ...bot,
           streetBet: currentStreetBet,
-          lastActionLabel: `Рейз +${cappedExtra}`,
+          lastActionLabel: `Рейз +${formatAmount(cappedExtra)}`,
         };
       }
 
@@ -375,7 +375,8 @@ export const PokerGame: React.FC = () => {
       return {
         ...bot,
         streetBet: roundCurrency(bot.streetBet + decision.callPart),
-        lastActionLabel: decision.callPart > 0 ? `Колл ${decision.callPart}` : 'Чек',
+        lastActionLabel:
+          decision.callPart > 0 ? `Колл ${formatAmount(decision.callPart)}` : 'Чек',
       };
     });
 
@@ -523,7 +524,7 @@ export const PokerGame: React.FC = () => {
                   <div className={styles.botIdentity}>
                     <AvatarIcon avatarId={bot.avatarId} size={34} />
                     <div>
-                      <div className={styles.botName}>{bot.nickname} · NPC</div>
+                      <div className={styles.botName}>{bot.nickname}</div>
                       <div className={styles.botStyle}>{bot.styleLabel}</div>
                     </div>
                   </div>
@@ -702,7 +703,7 @@ export const PokerGame: React.FC = () => {
                       className="btn btnSecondary btnSm mono"
                       onClick={() => setRaiseExtra(preset)}
                     >
-                      +{preset}
+                      +{formatAmount(preset)}
                     </button>
                   ))}
                 </div>

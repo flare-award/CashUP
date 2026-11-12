@@ -21,7 +21,7 @@ export const BaccaratGame: React.FC = () => {
     scaleDuration,
   } = useCashUp();
 
-  const [wager, setWager] = useState<number>(50);
+  const [wager, setWager] = useState<number>(0.5);
   const [side, setSide] = useState<BaccaratSide>('player');
   const [isDealing, setIsDealing] = useState<boolean>(false);
   const lockRef = useRef(false);

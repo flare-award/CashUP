@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Clock, Flame, Search, Star, X } from 'lucide-react';
+import { PromoShowcase } from '../components/ads/PromoShowcase';
 import { GameCard } from '../components/cards/GameCard';
 import { GAME_CATALOG } from '../games/registry';
 import { CATEGORY_LABELS } from '../games/types';
@@ -78,9 +79,9 @@ export const CatalogPage: React.FC = () => {
         }}
       >
         <div>
-          <h1>Каталог игровых механик</h1>
+          <h1>Каталог игровых залов</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>
-            Выберите любую игру — все 15 механик подключены к единому виртуальному балансу.
+            Выберите любую игру — все 15 механик подключены к единому мультивалютному счёту.
           </p>
         </div>
 
@@ -259,6 +260,8 @@ export const CatalogPage: React.FC = () => {
           </button>
         </div>
       )}
+
+      <PromoShowcase variant="banner" initialIndex={2} />
     </div>
   );
 };

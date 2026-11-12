@@ -200,7 +200,7 @@ export const StatisticsPage: React.FC = () => {
         <div>
           <h1>Игровая статистика</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>
-            Аналитика виртуальных раундов, серий и динамики баланса активного профиля.
+            Аналитика раундов, серий и динамики баланса активного профиля.
           </p>
         </div>
 
@@ -251,11 +251,11 @@ export const StatisticsPage: React.FC = () => {
             accent: 'var(--accent-primary)',
           },
           {
-            label: 'Сумма вирт. ставок',
+            label: 'Оборот ставок',
             val: formatAmount(computed.wagered),
           },
           {
-            label: 'Сумма вирт. выигрышей',
+            label: 'Сумма выигрышей',
             val: formatAmount(computed.won),
             accent: 'var(--accent-primary)',
           },
@@ -329,7 +329,7 @@ export const StatisticsPage: React.FC = () => {
           >
             <h2 style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
               <BarChart3 size={19} style={{ color: 'var(--accent-primary)' }} />
-              Динамика виртуального баланса
+              Динамика баланса
             </h2>
             <span className="mono" style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
               {hoveredPoint
@@ -342,7 +342,7 @@ export const StatisticsPage: React.FC = () => {
             viewBox={`0 0 ${chartSvg.w} ${chartSvg.h}`}
             style={{ width: '100%', height: 'auto', display: 'block' }}
             role="img"
-            aria-label="График изменения виртуального баланса"
+            aria-label="График изменения баланса"
             onMouseLeave={() => setHoverIdx(null)}
           >
             <defs>

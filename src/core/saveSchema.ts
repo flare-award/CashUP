@@ -8,9 +8,9 @@ import {
   UserProfile,
 } from '../types';
 import { createEmptyStats, reconcilePendingRoundsOnLoad } from './balance';
-import { roundCurrency } from './currency';
+import { convertToUsd, roundCurrency } from './currency';
 
-export const CURRENT_SAVE_VERSION = 2;
+export const CURRENT_SAVE_VERSION = 3;
 
 export const AVATAR_IDS: readonly AvatarId[] = [
   'emerald-diamond',
@@ -47,7 +47,7 @@ export const GAME_IDS: readonly GameId[] = [
 
 export const DEFAULT_SETTINGS: AppSettings = {
   theme: 'dark',
-  currency: 'RUB',
+  currency: 'USD',
   soundEnabled: true,
   soundVolume: 0.35,
   animationsEnabled: true,
@@ -229,6 +229,17 @@ const uiStateSchema = z.object({
   catalogSort: z.string().default('popular'),
 });
 
+const saveFileSchemaV3 = z.object({
+  app: z.literal('CashUP'),
+  saveVersion: z.literal(3),
+  exportedAt: z.string().min(1),
+  activeProfileId: z.string().nullable(),
+  profiles: z.array(userProfileSchemaV2),
+  settings: settingsSchema,
+  npcHistory: z.array(npcActivitySchema).default([]),
+  uiState: uiStateSchema.default(DEFAULT_UI_STATE),
+});
+
 const saveFileSchemaV2 = z.object({
   app: z.literal('CashUP'),
   saveVersion: z.literal(2),
@@ -312,8 +323,47 @@ function sanitizeProfiles(profiles: UserProfile[]): UserProfile[] {
   });
 }
 
+function migrateLegacyRubProfileToUsd(raw: UserProfile): UserProfile {
+  const scale = (n: number) => convertToUsd(n, 'RUB');
+  const perGame: UserProfile['stats']['perGame'] = {};
+  for (const [gid, gStats] of Object.entries(raw.stats.perGame)) {
+    if (gStats) {
+      perGame[gid as GameId] = {
+        ...gStats,
+        wagered: scale(gStats.wagered),
+        won: scale(gStats.won),
+        biggestWin: scale(gStats.biggestWin),
+      };
+    }
+  }
+  return {
+    ...raw,
+    balance: scale(raw.balance),
+    stats: {
+      ...raw.stats,
+      totalWagered: scale(raw.stats.totalWagered),
+      totalWon: scale(raw.stats.totalWon),
+      biggestWin: scale(raw.stats.biggestWin),
+      perGame,
+    },
+    history: raw.history.map((h) => ({
+      ...h,
+      wager: scale(h.wager),
+      payout: scale(h.payout),
+      netChange: scale(h.netChange),
+      balanceAfter: scale(h.balanceAfter),
+    })),
+    ledger: raw.ledger.map((l) => ({
+      ...l,
+      amount: scale(l.amount),
+      balanceAfter: scale(l.balanceAfter),
+    })),
+    pendingRounds: {},
+  };
+}
+
 /**
- * Parses, validates, and (if v1) migrates raw JSON string into a verified CashUpSaveData object.
+ * Parses, validates, and (if v1/v2) migrates raw JSON string into a verified CashUpSaveData object.
  */
 export function parseAndValidateSaveJson(rawText: string): SaveValidationResult {
   if (!rawText || typeof rawText !== 'string' || !rawText.trim()) {
@@ -354,7 +404,7 @@ export function parseAndValidateSaveJson(rawText: string): SaveValidationResult 
   }
 
   let migratedFromVersion: number | null = null;
-  let candidateV2: unknown = rawObj;
+  let candidateV3: unknown = rawObj;
 
   if (version === 1) {
     const parsedV1 = saveFileSchemaV1.safeParse(rawObj);
@@ -369,23 +419,44 @@ export function parseAndValidateSaveJson(rawText: string): SaveValidationResult 
     }
     const v1 = parsedV1.data;
     migratedFromVersion = 1;
-    candidateV2 = {
+    candidateV3 = {
       app: 'CashUP',
       saveVersion: CURRENT_SAVE_VERSION,
       exportedAt: v1.exportedAt ?? v1.createdAt ?? new Date().toISOString(),
       activeProfileId: v1.activeProfileId ?? v1.profiles[0]?.id ?? null,
-      profiles: v1.profiles.map((p) => ({
-        ...p,
-        stats: p.stats ?? createEmptyStats(),
-        pendingRounds: {},
-        settledRoundIds: [],
-      })),
+      profiles: v1.profiles.map((p) =>
+        migrateLegacyRubProfileToUsd({
+          ...p,
+          stats: p.stats ?? createEmptyStats(),
+          pendingRounds: {},
+          settledRoundIds: [],
+        })
+      ),
       settings: {
         ...DEFAULT_SETTINGS,
         ...(v1.settings ?? {}),
       },
       npcHistory: [],
       uiState: DEFAULT_UI_STATE,
+    };
+  } else if (version === 2) {
+    const parsedLegacyV2 = saveFileSchemaV2.safeParse(rawObj);
+    if (!parsedLegacyV2.success) {
+      const firstIssue = parsedLegacyV2.error.issues[0];
+      return {
+        ok: false,
+        error: `Ошибка структуры сохранения v2 (${firstIssue?.path.join('.') || 'корень'}): ${
+          firstIssue?.message ?? 'некорректные данные'
+        }`,
+      };
+    }
+    const v2 = parsedLegacyV2.data;
+    migratedFromVersion = 2;
+    candidateV3 = {
+      ...v2,
+      saveVersion: CURRENT_SAVE_VERSION,
+      profiles: v2.profiles.map((p) => migrateLegacyRubProfileToUsd(p)),
+      npcHistory: [],
     };
   } else if (version !== CURRENT_SAVE_VERSION) {
     return {
@@ -394,9 +465,9 @@ export function parseAndValidateSaveJson(rawText: string): SaveValidationResult 
     };
   }
 
-  const parsedV2 = saveFileSchemaV2.safeParse(candidateV2);
-  if (!parsedV2.success) {
-    const firstIssue = parsedV2.error.issues[0];
+  const parsedV3 = saveFileSchemaV3.safeParse(candidateV3);
+  if (!parsedV3.success) {
+    const firstIssue = parsedV3.error.issues[0];
     const pathLabel = firstIssue?.path.length ? firstIssue.path.join('.') : 'корень';
     return {
       ok: false,
@@ -405,15 +476,15 @@ export function parseAndValidateSaveJson(rawText: string): SaveValidationResult 
   }
 
   try {
-    const sanitizedProfiles = sanitizeProfiles(parsedV2.data.profiles);
+    const sanitizedProfiles = sanitizeProfiles(parsedV3.data.profiles);
     const validActiveId =
-      parsedV2.data.activeProfileId &&
-      sanitizedProfiles.some((p) => p.id === parsedV2.data.activeProfileId)
-        ? parsedV2.data.activeProfileId
+      parsedV3.data.activeProfileId &&
+      sanitizedProfiles.some((p) => p.id === parsedV3.data.activeProfileId)
+        ? parsedV3.data.activeProfileId
         : (sanitizedProfiles[0]?.id ?? null);
 
     const finalData: CashUpSaveData = {
-      ...parsedV2.data,
+      ...parsedV3.data,
       activeProfileId: validActiveId,
       profiles: sanitizedProfiles,
     };

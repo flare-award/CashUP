@@ -9,6 +9,7 @@ interface ModalProps {
   onClose?: () => void;
   wide?: boolean;
   hideClose?: boolean;
+  footer?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   wide = false,
   hideClose = false,
+  footer,
   children,
 }) => {
   useEffect(() => {
@@ -66,6 +68,20 @@ export const Modal: React.FC<ModalProps> = ({
           )}
         </div>
         {children}
+        {footer && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 10,
+              marginTop: 18,
+              paddingTop: 14,
+              borderTop: '1px solid var(--border-subtle)',
+            }}
+          >
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

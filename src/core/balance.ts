@@ -13,8 +13,11 @@ import {
 import { roundCurrency } from './currency';
 import { generateId, generateProfileId } from './rng';
 
-export const STARTER_BALANCE = 1000;
-export const EMERGENCY_REFILL_AMOUNT = 250;
+export const STARTER_BALANCE = 10;
+export const EMERGENCY_REFILL_AMOUNT = 2.5;
+export const EMERGENCY_REFILL_THRESHOLD = 0.1;
+export const DEFAULT_BET_USD = 0.5;
+export const MIN_BET_USD = 0.1;
 const MAX_HISTORY_ITEMS = 500;
 const MAX_LEDGER_ITEMS = 500;
 const MAX_SETTLED_IDS = 600;
@@ -54,7 +57,7 @@ export function createNewProfile(
     type: 'starter_bonus',
     amount: STARTER_BALANCE,
     balanceAfter: STARTER_BALANCE,
-    description: 'Единоразовый стартовый виртуальный баланс',
+    description: 'Начисление стартового баланса',
   };
 
   return {
@@ -82,16 +85,16 @@ export interface WagerValidationResult {
 
 export function validateWager(profile: UserProfile, rawWager: number): WagerValidationResult {
   if (typeof rawWager !== 'number' || !Number.isFinite(rawWager)) {
-    return { ok: false, amount: 0, error: 'Некорректная сумма виртуальной ставки.' };
+    return { ok: false, amount: 0, error: 'Некорректная сумма ставки.' };
   }
   const amount = roundCurrency(rawWager);
   if (amount <= 0) {
     return { ok: false, amount: 0, error: 'Ставка должна быть больше нуля.' };
   }
-  if (amount > profile.balance) {
-    return { ok: false, amount, error: 'Недостаточно виртуальных средств на балансе.' };
+  if (amount - profile.balance > 0.00001) {
+    return { ok: false, amount, error: 'Недостаточно средств на балансе.' };
   }
-  return { ok: true, amount };
+  return { ok: true, amount: Math.min(amount, profile.balance) };
 }
 
 export interface BeginRoundParams {
@@ -482,11 +485,11 @@ export function claimEmergencyVirtualRefill(
       error: 'Завершите активный раунд перед пополнением.',
     };
   }
-  if (profile.balance >= 1) {
+  if (profile.balance >= EMERGENCY_REFILL_THRESHOLD) {
     return {
       ok: false,
       profile,
-      error: 'Резервное пополнение доступно только при балансе меньше 1 виртуальной единицы.',
+      error: 'Пополнение доступно при балансе ниже минимальной ставки.',
     };
   }
 
@@ -497,7 +500,7 @@ export function claimEmergencyVirtualRefill(
     type: 'emergency_refill',
     amount: EMERGENCY_REFILL_AMOUNT,
     balanceAfter: nextBalance,
-    description: 'Резервное восстановление виртуального баланса',
+    description: 'Восстановление баланса счёта',
   };
 
   return {
