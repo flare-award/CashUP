@@ -1,0 +1,125 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform var(--dur-normal) var(--ease-out),
+    border-color var(--dur-normal) var(--ease-out),
+    box-shadow var(--dur-normal) var(--ease-out);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+[data-motion='none'] .card:hover {
+  transform: none;
+}
+
+.artWrap {
+  position: relative;
+  aspect-ratio: 280 / 152;
+  background-color: #0d131d;
+  border-bottom: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.favBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background-color: rgba(11, 14, 20, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #94a3b8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.favBtn:hover {
+  color: #f8fafc;
+  transform: scale(1.06);
+}
+
+.favActive {
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+.multTag {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: rgba(11, 14, 20, 0.78);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.32);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 15px 16px 16px;
+  gap: 8px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.catLabel {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.playedCount {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.title {
+  font-size: 1.04rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  flex: 1;
+}
+
+.footer {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.playLink {
+  width: 100%;
+}

@@ -1,0 +1,284 @@
+.container {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.wheelCard,
+.boardCard {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.wheelStage {
+  position: relative;
+  width: 310px;
+  height: 310px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 400px) {
+  .wheelStage {
+    width: 260px;
+    height: 260px;
+  }
+}
+
+.resultBanner {
+  text-align: center;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 14px;
+}
+
+.historyStrip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pocketPill {
+  width: 30px;
+  height: 28px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.pocketGreen {
+  background-color: #10b981;
+  color: #04130d;
+}
+
+.pocketRed {
+  background-color: #dc2626;
+}
+
+.pocketBlack {
+  background-color: #1e293b;
+  border: 1px solid #475569;
+}
+
+.chipToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.chipRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chipBtn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 800;
+  border: 2.5px dashed rgba(255, 255, 255, 0.35);
+  background-color: var(--bg-surface-subtle);
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.chipSelected {
+  background-color: var(--accent-primary);
+  color: #04130d;
+  border-color: #ffffff;
+  transform: scale(1.08);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.tableCloth {
+  background-color: var(--felt-bg);
+  border: 1px solid var(--felt-border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  overflow-x: auto;
+}
+
+.numbersLayout {
+  display: grid;
+  grid-template-columns: 48px repeat(12, minmax(36px, 1fr)) 54px;
+  grid-template-rows: repeat(3, 44px);
+  gap: 4px;
+  min-width: 560px;
+}
+
+.zeroCell {
+  grid-row: 1 / span 3;
+  grid-column: 1;
+  background-color: #0d8a60;
+  color: #ffffff;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.numCell {
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: #ffffff;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  transition: filter var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.numCell:hover:not(:disabled),
+.zeroCell:hover:not(:disabled),
+.outsideCell:hover:not(:disabled) {
+  filter: brightness(1.16);
+}
+
+.cellRed {
+  background-color: #b91c1c;
+}
+
+.cellBlack {
+  background-color: #161e2c;
+}
+
+.colCell {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  position: relative;
+}
+
+.dozensRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+  min-width: 560px;
+}
+
+.evenMoneyRow {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-top: 6px;
+  min-width: 560px;
+}
+
+.outsideCell {
+  height: 40px;
+  border-radius: 7px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-strong);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.outsideRed {
+  background-color: rgba(185, 28, 28, 0.72);
+  color: #ffffff;
+}
+
+.outsideBlack {
+  background-color: #161e2c;
+  color: #ffffff;
+}
+
+.winningHighlight {
+  outline: 2.5px solid var(--accent-gold);
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.65);
+  z-index: 2;
+}
+
+.betChipBadge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 20px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background-color: #f59e0b;
+  color: #0b0e14;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+}
+
+.summaryBar {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.metrics {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.metricItem span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.metricItem strong {
+  font-family: var(--font-mono);
+  font-size: 1.02rem;
+}

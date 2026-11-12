@@ -1,0 +1,66 @@
+.avatarGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+
+@media (max-width: 480px) {
+  .avatarGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.avatarOption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border-subtle);
+  background-color: var(--bg-surface);
+  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.avatarOption:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.avatarSelected {
+  border-color: var(--accent-primary);
+  background-color: var(--accent-primary-soft);
+}
+
+.bonusNotice {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-primary-soft);
+  border: 1px solid var(--border-accent);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.divider {
+  margin: 18px 0 14px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.errorBox {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-xs);
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: 0.83rem;
+}

@@ -1,0 +1,101 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.labelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+}
+
+.balanceHint {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 5px 8px;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+
+.inputGroup:focus-within {
+  border-color: var(--accent-primary);
+}
+
+.inputError {
+  border-color: var(--color-danger);
+}
+
+.currencyTag {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  padding: 0 6px;
+  user-select: none;
+}
+
+.numberInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding: 6px 4px;
+  outline: none;
+}
+
+.quickRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.quickBtn {
+  padding: 6px 4px;
+  border-radius: var(--radius-xs);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+.quickBtn:hover:not(:disabled) {
+  background-color: var(--bg-surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.errorNote {
+  font-size: 0.79rem;
+  color: var(--color-danger);
+}
+
+.refillBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: var(--radius-xs);
+  background-color: var(--accent-gold-soft);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  font-size: 0.8rem;
+}
