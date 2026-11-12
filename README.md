@@ -48,9 +48,20 @@ npm test
 # 4. Проверка типов TypeScript
 npm run typecheck
 
-# 5. Сборка production-версии (папка dist/)
+# 5. Сборка production-версии для GitHub Pages (папка docs/)
 npm run build
 
 # 6. Локальный предпросмотр production-сборки
 npm run preview
 ```
+
+---
+
+## Публикация на GitHub Pages
+
+В репозитории уже собрана готовая production-версия в директории `docs/` (с относительными путями `./`, `.nojekyll`, `404.html` и `HashRouter` для работы всех маршрутов без 404 при перезагрузке страницы), а также настроен workflow `.github/workflows/pages.yml`.
+
+Доступны оба варианта включения в **Settings → Pages**:
+1. **Deploy from a branch** — выберите ветку (`main` после слияния PR или рабочую ветку) и папку **`/docs`** (поддерживается также выбор `/ (root)` за счёт автоматического перенаправления в `./docs/`).
+2. **GitHub Actions** — автоматический деплой артефакта `./docs` при каждом обновлении ветки `main`.
+

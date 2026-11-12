@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { CatalogPage } from './pages/CatalogPage';
 import { GamePage } from './pages/GamePage';
@@ -30,9 +30,9 @@ export const AppRoutes: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <CashUpProvider>
-      <BrowserRouter>
+      <HashRouter>
         <AppRoutes />
-      </BrowserRouter>
+      </HashRouter>
     </CashUpProvider>
   );
 };
