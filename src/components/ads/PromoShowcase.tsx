@@ -1,494 +1,349 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowUpRight, CheckCircle2, Compass, Sparkles } from 'lucide-react';
+import { Check, ExternalLink, Globe, X } from 'lucide-react';
 import { useCashUp } from '../../state/CashUpContext';
 import { Modal } from '../ui/Modal';
 import styles from './PromoShowcase.module.css';
 
-export interface EditionOption {
-  id: string;
-  name: string;
-  code: string;
-  primaryHex: string;
-  secondaryHex: string;
-  priceMultiplier: number;
+type AdBrandId = 'sunpop' | 'stride' | 'soniq' | 'crusty' | 'roasty' | 'skygo';
+
+interface AdCampaign {
+  id: AdBrandId;
+  brand: string;
+  domain: string;
+  product: string;
+  quote: string;
+  priceUsd: number;
+  oldPriceUsd?: number;
+  pricePrefix?: string;
+  promoBadge: string;
+  perks: [string, string, string];
+  orderActionLabel: string;
+  /** Distinct vibrant palette completely independent of the host site */
+  bgGradient: string;
+  textColor: string;
+  artBg: string;
+  pillBg: string;
+  pillText: string;
+  ctaBg: string;
+  ctaText: string;
+  badgeBg: string;
+  badgeText: string;
 }
 
-export interface LuxuryCampaign {
-  id: 'chronos' | 'veloce' | 'nocturne' | 'auralis';
-  shortBrand: string;
-  origin: string;
-  serialStamp: string;
-  coordLabel: string;
-  title: string;
-  tagline: string;
-  editorialStory: string;
-  basePriceUsd: number;
-  ctaLabel: string;
-  boutiques: string;
-  specs: Array<{ label: string; value: string }>;
-  editions: EditionOption[];
-}
-
-export const LUXURY_CAMPAIGNS: readonly LuxuryCampaign[] = [
+const AD_CAMPAIGNS: readonly AdCampaign[] = [
   {
-    id: 'chronos',
-    shortBrand: 'CHRONOS VANTAGE',
-    origin: 'GENÈVE · ATELIER IV',
-    serialStamp: 'CAL. CV-09 · 042/150',
-    coordLabel: '46°12′N 06°08′E',
-    title: 'Aether Tourbillon Skeleton',
-    tagline:
-      'Парящий минутный турбийон на сапфировых мостах с корпусом из кованого карбона TPT и титана Grade 5.',
-    editorialStory:
-      'Мануфактурный калибр CV-09 собирается вручную одним часовщиком в течение 14 недель. Двойной заводной барабан с кремниевым спуском обеспечивает изохронный запас хода 96 часов при массе корпуса всего 34 грамма.',
-    basePriceUsd: 48500,
-    ctaLabel: 'Открыть хронограф',
-    boutiques: 'ЦЮРИХ · ТОКИО · ДУБАЙ · МОНАКО',
-    specs: [
-      { label: 'Механизм', value: 'Cal. CV-09 Tourbillon' },
-      { label: 'Запас хода', value: '96 часов · 4 Гц' },
-      { label: 'Корпус', value: 'Carbon TPT / Ti Gr.5' },
-      { label: 'Тираж серии', value: '150 нумер. экз.' },
-    ],
-    editions: [
-      {
-        id: 'emerald-carbon',
-        name: 'Emerald Carbon TPT',
-        code: 'REF. CV09-EM',
-        primaryHex: '#10b981',
-        secondaryHex: '#f59e0b',
-        priceMultiplier: 1,
-      },
-      {
-        id: 'rose-obsidian',
-        name: 'Or Rose 5N & Obsidian',
-        code: 'REF. CV09-RG',
-        primaryHex: '#f59e0b',
-        secondaryHex: '#f43f5e',
-        priceMultiplier: 1.18,
-      },
-      {
-        id: 'glacier-ti',
-        name: 'Glacier Sapphire Ti',
-        code: 'REF. CV09-TI',
-        primaryHex: '#38bdf8',
-        secondaryHex: '#a78bfa',
-        priceMultiplier: 1.09,
-      },
-    ],
+    id: 'sunpop',
+    brand: 'SUNPOP',
+    domain: 'sunpop.drink',
+    product: 'Манго-Юдзу Zero · 6 банок',
+    quote: '«Один глоток — и будто лето включили на полную громкость.»',
+    priceUsd: 4.9,
+    oldPriceUsd: 6.9,
+    promoBadge: '−29%',
+    perks: ['Натуральный сок юдзу', '0 г сахара · 12 ккал', 'Доставка за 30 минут'],
+    orderActionLabel: 'Заказать набор на сайте',
+    bgGradient: 'linear-gradient(135deg, #ff512f 0%, #f09819 100%)',
+    textColor: '#ffffff',
+    artBg: 'rgba(255, 255, 255, 0.18)',
+    pillBg: 'rgba(0, 0, 0, 0.2)',
+    pillText: '#ffffff',
+    ctaBg: '#ffffff',
+    ctaText: '#d9381e',
+    badgeBg: '#fef08a',
+    badgeText: '#7c2d12',
   },
   {
-    id: 'veloce',
-    shortBrand: 'VELOCE ATELIER',
-    origin: 'MODENA · AERO DIVISION',
-    serialStamp: 'SERIE ZERO · MONOLITH',
-    coordLabel: '44°38′N 10°55′E',
-    title: 'Vespera GT-Zero Coupe',
-    tagline:
-      'Электрический гран-туризмо с активным аэродинамическим оперением, карбоновым монококом и архитектурой 980 В.',
-    editorialStory:
-      'Четыре независимых осевых электромотора с мгновенной векторизацией тяги на каждом колесе позволяют проходить скоростные дуги с боковым ускорением до 1.85 g. Салон отделан базальтовым волокном и анилиновой кожей ручной выделки.',
-    basePriceUsd: 215000,
-    ctaLabel: 'Конфигуратор GT',
-    boutiques: 'МИЛАН · ЛОНДОН · ШАНХАЙ · МЮНХЕН',
-    specs: [
-      { label: 'Силовая установка', value: '1 180 л.с. · Quad-Motor' },
-      { label: 'Динамика 0–100', value: '1.98 сек · 340 км/ч' },
-      { label: 'Батарея', value: 'Solid-State · 980 В' },
-      { label: 'Запас хода', value: '790 км WLTP' },
-    ],
-    editions: [
-      {
-        id: 'verde-corsa',
-        name: 'Verde Aero Satin',
-        code: 'SPEC. VZ-01',
-        primaryHex: '#10b981',
-        secondaryHex: '#fbbf24',
-        priceMultiplier: 1,
-      },
-      {
-        id: 'nero-forgiato',
-        name: 'Nero Carbonio Exposed',
-        code: 'SPEC. VZ-02',
-        primaryHex: '#f59e0b',
-        secondaryHex: '#94a3b8',
-        priceMultiplier: 1.12,
-      },
-      {
-        id: 'argento-luna',
-        name: 'Argento Liquido',
-        code: 'SPEC. VZ-03',
-        primaryHex: '#38bdf8',
-        secondaryHex: '#10b981',
-        priceMultiplier: 1.05,
-      },
-    ],
+    id: 'stride',
+    brand: 'STRIDE',
+    domain: 'stridelab.store',
+    product: 'Кроссовки AirFlow Cloud',
+    quote: '«Настолько лёгкие, что городской асфальт кажется облаком.»',
+    priceUsd: 69,
+    oldPriceUsd: 95,
+    promoBadge: 'Хит сезона',
+    perks: ['Вес пары всего 210 г', 'Дышащая сетка 3D-Knit', 'Бесплатная примерка'],
+    orderActionLabel: 'Выбрать размер на сайте',
+    bgGradient: 'linear-gradient(135deg, #1d4ed8 0%, #06b6d4 100%)',
+    textColor: '#ffffff',
+    artBg: 'rgba(255, 255, 255, 0.16)',
+    pillBg: 'rgba(15, 23, 42, 0.26)',
+    pillText: '#ffffff',
+    ctaBg: '#facc15',
+    ctaText: '#0f172a',
+    badgeBg: '#ffffff',
+    badgeText: '#1d4ed8',
   },
   {
-    id: 'nocturne',
-    shortBrand: 'MAISON NOCTURNE',
-    origin: 'PARIS · HAUTE PARFUMERIE',
-    serialStamp: 'EXTRAIT 38% · N°07',
-    coordLabel: '48°52′N 02°19′E',
-    title: 'Obsidian N°07 Extrait Absolu',
-    tagline:
-      'Молекулярный парфюмерный экстракт холодной мацерации в базальтовых амфорах во флаконе ручной огранки.',
-    editorialStory:
-      'Редкий кашмирский чёрный шафран и смола сомалийского олибанума соединяются с абсолютом флорентийского ириса трёхлетней выдержки. Каждый хрустальный флакон полируется вручную и укомплектован футляром из мореного дуба.',
-    basePriceUsd: 640,
-    ctaLabel: 'Ноты композиции',
-    boutiques: 'ПАРИЖ · АМСТЕРДАМ · СЕУЛ · НЬЮ-ЙОРК',
-    specs: [
-      { label: 'Концентрация', value: '38% Extrait Absolu' },
-      { label: 'Верхние ноты', value: 'Чёрный шафран, Бергамот' },
-      { label: 'Сердце и база', value: 'Ладан, Ирис, Кедр' },
-      { label: 'Выдержка', value: '180 суток · 100 мл' },
-    ],
-    editions: [
-      {
-        id: 'amber-basalt',
-        name: 'Flacon Basalte Noir 100 мл',
-        code: 'LOT. MN-07A',
-        primaryHex: '#f59e0b',
-        secondaryHex: '#10b981',
-        priceMultiplier: 1,
-      },
-      {
-        id: 'emerald-collector',
-        name: 'Coffret Cristal Vert 200 мл',
-        code: 'LOT. MN-07E',
-        primaryHex: '#10b981',
-        secondaryHex: '#eab308',
-        priceMultiplier: 1.75,
-      },
-      {
-        id: 'travel-atomizer',
-        name: 'Кофр Титан 3×15 мл',
-        code: 'LOT. MN-07T',
-        primaryHex: '#a78bfa',
-        secondaryHex: '#f59e0b',
-        priceMultiplier: 0.55,
-      },
-    ],
+    id: 'roasty',
+    brand: 'ROASTY',
+    domain: 'roasty.coffee',
+    product: 'Дрип-кофе «Утро в Милане»',
+    quote: '«Любимая кофейня прямо в твоей чашке ровно за 30 секунд.»',
+    priceUsd: 8.4,
+    oldPriceUsd: 11.2,
+    promoBadge: '20 пакетов',
+    perks: ['100% арабика свежей обжарки', 'Без кофемашины и турки', 'Ноты карамели и фундука'],
+    orderActionLabel: 'Оформить пробный бокс',
+    bgGradient: 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%)',
+    textColor: '#431407',
+    artBg: 'rgba(124, 45, 18, 0.09)',
+    pillBg: 'rgba(124, 45, 18, 0.12)',
+    pillText: '#7c2d12',
+    ctaBg: '#7c2d12',
+    ctaText: '#fff7ed',
+    badgeBg: '#ea580c',
+    badgeText: '#ffffff',
   },
   {
-    id: 'auralis',
-    shortBrand: 'AURALIS ACOUSTICS',
-    origin: 'KØBENHAVN · REFERENCE LAB',
-    serialStamp: 'PLANAR MK-II · PURE A',
-    coordLabel: '55°40′N 12°34′E',
-    title: 'Orpheus Planar Reference II',
-    tagline:
-      'Открытая изодинамическая акустическая система с ультратонкой золотой мембраной 0.8 мкм и двойным моно-усилителем.',
-    editorialStory:
-      'Цельнофрезерованная рама из авиационного алюминия устраняет корпусные резонансы, создавая голографическую звуковую сцену студийного масштаба. В комплект входит балансный лампово-транзисторный тракт класса Pure A.',
-    basePriceUsd: 14800,
-    ctaLabel: 'Акустический стенд',
-    boutiques: 'КОПЕНГАГЕН · БЕРЛИН · ОСАКА · СТОКГОЛЬМ',
-    specs: [
-      { label: 'Излучатель', value: 'Планарный 0.8 мкм Au' },
-      { label: 'Частотный охват', value: '5 Гц – 68 кГц' },
-      { label: 'Усиление', value: 'Dual Mono · Pure Class A' },
-      { label: 'Шасси', value: 'CNC Алюминий 6061-T6' },
-    ],
-    editions: [
-      {
-        id: 'anodized-gold',
-        name: 'Graphite & 24K Ribbon',
-        code: 'SYS. OR-24G',
-        primaryHex: '#f59e0b',
-        secondaryHex: '#10b981',
-        priceMultiplier: 1,
-      },
-      {
-        id: 'nordic-emerald',
-        name: 'Nordic Emerald Slate',
-        code: 'SYS. OR-EM2',
-        primaryHex: '#10b981',
-        secondaryHex: '#38bdf8',
-        priceMultiplier: 1.06,
-      },
-      {
-        id: 'raw-titanium',
-        name: 'Brushed Raw Titanium',
-        code: 'SYS. OR-RAW',
-        primaryHex: '#94a3b8',
-        secondaryHex: '#f59e0b',
-        priceMultiplier: 1.14,
-      },
-    ],
+    id: 'soniq',
+    brand: 'SONIQ',
+    domain: 'soniq-sound.com',
+    product: 'Наушники Pulse ANC',
+    quote: '«Выключи гул всего города. Оставь только чистый звук.»',
+    priceUsd: 79,
+    oldPriceUsd: 109,
+    promoBadge: '−28%',
+    perks: ['Активное шумоподавление', 'До 48 часов без розетки', 'Мягкие амбушюры Memory'],
+    orderActionLabel: 'Перейти в каталог Soniq',
+    bgGradient: 'linear-gradient(135deg, #6d28d9 0%, #ec4899 100%)',
+    textColor: '#ffffff',
+    artBg: 'rgba(255, 255, 255, 0.16)',
+    pillBg: 'rgba(0, 0, 0, 0.22)',
+    pillText: '#ffffff',
+    ctaBg: '#ffffff',
+    ctaText: '#6d28d9',
+    badgeBg: '#fbcfe8',
+    badgeText: '#831843',
+  },
+  {
+    id: 'crusty',
+    brand: 'CRUSTY',
+    domain: 'crustypizza.ru',
+    product: '2 Римские пиццы 35 см',
+    quote: '«Привезём обжигающе горячими за 25 минут — или пицца за наш счёт!»',
+    priceUsd: 11.5,
+    oldPriceUsd: 16,
+    promoBadge: '2 по цене 1',
+    perks: ['Хрустящее тесто 72 ч', 'Тянущаяся моцарелла', 'Соус в подарок к заказу'],
+    orderActionLabel: 'Собрать комбо на сайте',
+    bgGradient: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 100%)',
+    textColor: '#ffffff',
+    artBg: 'rgba(255, 255, 255, 0.18)',
+    pillBg: 'rgba(0, 0, 0, 0.22)',
+    pillText: '#ffffff',
+    ctaBg: '#fffbeb',
+    ctaText: '#b91c1c',
+    badgeBg: '#fef08a',
+    badgeText: '#991b1b',
+  },
+  {
+    id: 'skygo',
+    brand: 'SKYGO',
+    domain: 'skygo.travel',
+    product: 'Билеты к тёплому морю',
+    quote: '«Поменять серые будни на +28°C у океана проще, чем кажется.»',
+    priceUsd: 89,
+    oldPriceUsd: 139,
+    pricePrefix: 'от ',
+    promoBadge: 'Прямой рейс',
+    perks: ['Ручная кладь 10 кг включена', 'Обмен даты без штрафа', 'Кэшбэк милями 10%'],
+    orderActionLabel: 'Найти билеты на сайте',
+    bgGradient: 'linear-gradient(135deg, #0284c7 0%, #14b8a6 100%)',
+    textColor: '#ffffff',
+    artBg: 'rgba(255, 255, 255, 0.18)',
+    pillBg: 'rgba(15, 23, 42, 0.22)',
+    pillText: '#ffffff',
+    ctaBg: '#ffffff',
+    ctaText: '#0f766e',
+    badgeBg: '#fde047',
+    badgeText: '#134e4a',
   },
 ];
 
-const CampaignArtworkSvg: React.FC<{
-  id: LuxuryCampaign['id'];
-  primary: string;
-  secondary: string;
-  size?: 'compact' | 'large';
-}> = ({ id, primary, secondary, size = 'compact' }) => {
-  const w = size === 'large' ? 280 : 210;
-  const h = size === 'large' ? 175 : 112;
-
-  if (id === 'chronos') {
-    return (
-      <svg viewBox="0 0 260 150" width={w} height={h} aria-hidden="true">
-        <defs>
-          <radialGradient id="cvGlow" cx="50%" cy="50%" r="55%">
-            <stop offset="0%" stopColor={primary} stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#06090f" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <circle cx="130" cy="75" r="70" fill="url(#cvGlow)" />
-        {/* Watch lugs */}
-        <path
-          d="M100 12 L160 12 L168 30 L92 30 Z M92 120 L168 120 L160 138 L100 138 Z"
-          fill="#182232"
-          stroke="rgba(255,255,255,0.22)"
-          strokeWidth="1.2"
-        />
-        {/* Bezel & tachymeter */}
-        <circle
-          cx="130"
-          cy="75"
-          r="56"
-          fill="#0b1018"
-          stroke={primary}
-          strokeWidth="2"
-        />
-        <circle
-          cx="130"
-          cy="75"
-          r="49"
-          fill="none"
-          stroke="rgba(255,255,255,0.18)"
-          strokeDasharray="2 5.4"
-          strokeWidth="3"
-        />
-        {/* Skeleton bridges */}
-        <line x1="88" y1="52" x2="172" y2="98" stroke="#334155" strokeWidth="2.2" />
-        <line x1="88" y1="98" x2="172" y2="52" stroke="#334155" strokeWidth="2.2" />
-        {/* Rotating Tourbillon Cage at 6 o'clock */}
-        <g transform="translate(130, 96)">
-          <g className={styles.spinSlow}>
-            <circle r="15" fill="none" stroke={secondary} strokeWidth="1.6" />
-            <polygon
-              points="0,-14 3,-3 13,6 0,4 -13,6 -3,-3"
-              fill="none"
-              stroke={primary}
-              strokeWidth="1.3"
-            />
-            <circle r="3" fill={secondary} />
-          </g>
-        </g>
-        {/* Main hands */}
-        <line
-          x1="130"
-          y1="75"
-          x2="108"
-          y2="54"
-          stroke="#f8fafc"
-          strokeWidth="2.8"
-          strokeLinecap="round"
-        />
-        <line
-          x1="130"
-          y1="75"
-          x2="162"
-          y2="58"
-          stroke={primary}
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <circle cx="130" cy="75" r="4" fill={secondary} />
-      </svg>
-    );
-  }
-
-  if (id === 'veloce') {
-    return (
-      <svg viewBox="0 0 260 150" width={w} height={h} aria-hidden="true">
-        {/* Aero wind-tunnel streamlines */}
-        <path
-          d="M16 54 Q 95 28, 178 44 T 248 56"
-          fill="none"
-          stroke={primary}
-          strokeWidth="1.3"
-          strokeOpacity="0.55"
-        />
-        <path
-          d="M10 42 Q 98 16, 184 34 T 252 46"
-          fill="none"
-          stroke={secondary}
-          strokeWidth="1"
-          strokeDasharray="4 4"
-          strokeOpacity="0.45"
-        />
-        {/* Ground reflection */}
-        <ellipse cx="132" cy="116" rx="98" ry="8" fill={primary} fillOpacity="0.16" />
-        {/* Sculpted Hyper-GT body */}
-        <path
-          d="M28 102 L42 82 L88 64 L146 58 L206 72 L234 90 L228 104 L34 104 Z"
-          fill="#111926"
-          stroke={primary}
-          strokeWidth="1.8"
-        />
-        {/* Canopy glasshouse */}
-        <path
-          d="M84 66 L142 60 L184 72 L124 75 Z"
-          fill="rgba(56, 189, 248, 0.16)"
-          stroke="rgba(255,255,255,0.35)"
-          strokeWidth="1.1"
-        />
-        {/* Laser blade headlight & rear diffuser glow */}
-        <line x1="210" y1="84" x2="231" y2="89" stroke={secondary} strokeWidth="2.8" strokeLinecap="round" />
-        <line x1="29" y1="88" x2="42" y2="85" stroke="#f43f5e" strokeWidth="2.6" strokeLinecap="round" />
-        {/* Forged center-lock wheels */}
-        {[72, 192].map((cx) => (
-          <g key={cx} transform={`translate(${cx}, 103)`}>
-            <circle r="17" fill="#070a10" stroke="#475569" strokeWidth="2.2" />
-            <circle r="11" fill="none" stroke={primary} strokeDasharray="3 3" strokeWidth="1.5" />
-            <circle r="3.5" fill={secondary} />
-          </g>
-        ))}
-      </svg>
-    );
-  }
-
-  if (id === 'nocturne') {
-    return (
-      <svg viewBox="0 0 260 150" width={w} height={h} aria-hidden="true">
-        {/* Caustic light rays */}
-        <polygon points="130,22 64,136 196,136" fill={primary} fillOpacity="0.09" />
-        <polygon points="130,36 86,134 174,134" fill={secondary} fillOpacity="0.12" />
-        {/* Molecular constellation */}
-        <g stroke="rgba(255,255,255,0.22)" strokeWidth="1">
-          <line x1="52" y1="48" x2="76" y2="34" />
-          <line x1="76" y1="34" x2="92" y2="54" />
-          <line x1="176" y1="44" x2="202" y2="32" />
-          <line x1="202" y1="32" x2="214" y2="58" />
-        </g>
-        <circle cx="52" cy="48" r="2.5" fill={primary} />
-        <circle cx="76" cy="34" r="3" fill={secondary} />
-        <circle cx="202" cy="32" r="3" fill={primary} />
-        {/* Knurled stopper & collar */}
-        <rect
-          x="114"
-          y="18"
-          width="32"
-          height="20"
-          rx="3"
-          fill="#1e293b"
-          stroke={secondary}
-          strokeWidth="1.6"
-        />
-        <rect x="121" y="38" width="18" height="8" fill={secondary} />
-        {/* Faceted Obsidian Flacon */}
-        <polygon
-          points="96,46 164,46 176,64 168,130 92,130 84,64"
-          fill="#0c131e"
-          stroke={primary}
-          strokeWidth="1.8"
-        />
-        <polygon
-          points="106,56 154,56 158,120 102,120"
-          fill={secondary}
-          fillOpacity="0.18"
-        />
-        {/* Luxury Plaque */}
-        <rect
-          x="108"
-          y="72"
-          width="44"
-          height="32"
-          rx="2"
-          fill="#070a10"
-          stroke={secondary}
-          strokeWidth="1.2"
-        />
-        <text
-          x="130"
-          y="87"
-          textAnchor="middle"
-          fill="#f8fafc"
-          fontSize="7.5"
-          fontFamily="monospace"
-          fontWeight="700"
-        >
-          N°07
-        </text>
-        <text
-          x="130"
-          y="97"
-          textAnchor="middle"
-          fill={primary}
-          fontSize="5.5"
-          fontFamily="monospace"
-        >
-          PARIS
-        </text>
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 260 150" width={w} height={h} aria-hidden="true">
-      {/* Concentric acoustic wave rings */}
-      {[28, 46, 64].map((r, i) => (
-        <circle
-          key={r}
-          cx="130"
-          cy="75"
-          r={r}
-          fill="none"
-          stroke={i % 2 === 0 ? primary : secondary}
-          strokeOpacity={0.35 - i * 0.08}
-          strokeWidth="1.2"
-          strokeDasharray={i === 1 ? '4 4' : undefined}
-        />
-      ))}
-      {/* Monolithic Planar Speaker Pair */}
-      {[92, 168].map((x) => (
-        <g key={x} transform={`translate(${x}, 20)`}>
-          <rect
-            x="-20"
-            y="0"
-            width="40"
-            height="110"
-            rx="6"
-            fill="#111826"
-            stroke="rgba(255,255,255,0.25)"
-            strokeWidth="1.5"
+const BrandLogoIcon: React.FC<{ id: AdBrandId; color: string }> = ({ id, color }) => {
+  switch (id) {
+    case 'sunpop':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="6" fill={color} />
+          <path
+            d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"
+            stroke={color}
+            strokeWidth="2.3"
+            strokeLinecap="round"
           />
-          {/* Gold Planar Ribbon */}
-          <rect
-            x="-7"
-            y="10"
-            width="14"
-            height="90"
-            rx="2"
-            fill={secondary}
-            fillOpacity="0.28"
-            stroke={secondary}
-            strokeWidth="1.2"
+        </svg>
+      );
+    case 'stride':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M3 15L14 6l-2 6h9L10 20l2-5H3z"
+            fill={color}
           />
-          {[22, 38, 54, 70, 86].map((ly) => (
-            <line
-              key={ly}
-              x1="-5"
-              y1={ly}
-              x2="5"
-              y2={ly}
-              stroke={primary}
-              strokeWidth="1.2"
-            />
-          ))}
-        </g>
-      ))}
-    </svg>
-  );
+        </svg>
+      );
+    case 'roasty':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <ellipse cx="12" cy="12" rx="7" ry="9" transform="rotate(-25 12 12)" stroke={color} strokeWidth="2.4" />
+          <path d="M9 5c3 4 3 10 6 14" stroke={color} strokeWidth="2.2" strokeLinecap="round" />
+        </svg>
+      );
+    case 'soniq':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M4 13v-2a8 8 0 0 1 16 0v2"
+            stroke={color}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <rect x="3" y="12" width="4" height="7" rx="2" fill={color} />
+          <rect x="17" y="12" width="4" height="7" rx="2" fill={color} />
+        </svg>
+      );
+    case 'crusty':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3L21 20H3L12 3z" stroke={color} strokeWidth="2.3" strokeLinejoin="round" />
+          <circle cx="12" cy="13" r="1.6" fill={color} />
+          <circle cx="9.5" cy="17" r="1.4" fill={color} />
+          <circle cx="14.8" cy="16.8" r="1.4" fill={color} />
+        </svg>
+      );
+    case 'skygo':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 4L3 11l7 2.8L13.5 21 21 4z" fill={color} />
+        </svg>
+      );
+  }
 };
 
-interface PromoShowcaseProps {
+const ProductMinimalArt: React.FC<{ id: AdBrandId; size?: number }> = ({
+  id,
+  size = 66,
+}) => {
+  switch (id) {
+    case 'sunpop':
+      return (
+        <svg width={size} height={size} viewBox="0 0 80 80" aria-hidden="true">
+          {/* Citrus slice behind can */}
+          <circle cx="54" cy="26" r="15" fill="#fde047" />
+          <circle cx="54" cy="26" r="11" fill="#facc15" />
+          {/* Sleek soda can */}
+          <rect x="22" y="16" width="28" height="50" rx="7" fill="#ffffff" />
+          <rect x="22" y="29" width="28" height="22" fill="#fb923c" />
+          <rect x="26" y="13" width="20" height="4" rx="2" fill="#e2e8f0" />
+          <circle cx="36" cy="40" r="6" fill="#fef08a" />
+          {/* Fizzy bubbles */}
+          <circle cx="16" cy="24" r="2.5" fill="rgba(255,255,255,0.75)" />
+          <circle cx="62" cy="52" r="3" fill="rgba(255,255,255,0.75)" />
+          <circle cx="58" cy="62" r="2" fill="rgba(255,255,255,0.6)" />
+        </svg>
+      );
+
+    case 'stride':
+      return (
+        <svg width={size} height={size} viewBox="0 0 80 80" aria-hidden="true">
+          <g transform="rotate(-14 40 42)">
+            {/* Cushioned sole */}
+            <rect x="10" y="48" width="60" height="11" rx="5.5" fill="#facc15" />
+            {/* Clean sneaker upper */}
+            <path
+              d="M14 48L22 25h15l8 11 19 4c4 1 6 4 6 8H14z"
+              fill="#ffffff"
+            />
+            {/* Dynamic stripe */}
+            <path
+              d="M24 41l22-5-14 9"
+              stroke="#1d4ed8"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </g>
+        </svg>
+      );
+
+    case 'roasty':
+      return (
+        <svg width={size} height={size} viewBox="0 0 80 80" aria-hidden="true">
+          {/* Aroma waves */}
+          <path
+            d="M32 14c0 5 4 5 4 10M44 12c0 5 4 5 4 10"
+            stroke="#9a3412"
+            strokeWidth="2.6"
+            strokeLinecap="round"
+            fill="none"
+          />
+          {/* Minimalist coffee cup */}
+          <path d="M20 30h34l-4 32a6 6 0 0 1-6 5H30a6 6 0 0 1-6-5l-4-32z" fill="#7c2d12" />
+          <path d="M54 36h6a6 6 0 0 1 0 12h-7" stroke="#7c2d12" strokeWidth="4" fill="none" />
+          <rect x="22" y="41" width="30" height="11" rx="3" fill="#fed7aa" />
+        </svg>
+      );
+
+    case 'soniq':
+      return (
+        <svg width={size} height={size} viewBox="0 0 80 80" aria-hidden="true">
+          <path
+            d="M20 44V36a20 20 0 0 1 40 0v8"
+            stroke="#ffffff"
+            strokeWidth="6"
+            strokeLinecap="round"
+            fill="none"
+          />
+          <rect x="14" y="39" width="13" height="22" rx="6.5" fill="#fbcfe8" />
+          <rect x="53" y="39" width="13" height="22" rx="6.5" fill="#fbcfe8" />
+          <path
+            d="M34 49l4-7 4 12 4-8 3 3"
+            stroke="#fef08a"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </svg>
+      );
+
+    case 'crusty':
+      return (
+        <svg width={size} height={size} viewBox="0 0 80 80" aria-hidden="true">
+          {/* Golden crust */}
+          <path d="M18 22c15-8 33-6 46 6L34 66 18 22z" fill="#fde047" />
+          <path d="M16 20c16-9 36-7 50 6" stroke="#b45309" strokeWidth="6" strokeLinecap="round" fill="none" />
+          {/* Pepperoni toppings */}
+          <circle cx="36" cy="34" r="5" fill="#dc2626" />
+          <circle cx="46" cy="43" r="4.5" fill="#dc2626" />
+          <circle cx="33" cy="48" r="4" fill="#dc2626" />
+          {/* Fresh basil leaf */}
+          <ellipse cx="41" cy="39" rx="3.5" ry="2" transform="rotate(-30 41 39)" fill="#16a34a" />
+        </svg>
+      );
+
+    case 'skygo':
+      return (
+        <svg width={size} height={size} viewBox="0 0 80 80" aria-hidden="true">
+          {/* Warm sun */}
+          <circle cx="52" cy="26" r="13" fill="#fde047" />
+          {/* Fluffy cloud */}
+          <path
+            d="M16 54h38a8 8 0 0 0 0-16 11 11 0 0 0-21-3 9 9 0 0 0-17 7v12z"
+            fill="rgba(255,255,255,0.92)"
+          />
+          {/* Sleek jet */}
+          <path
+            d="M16 38l46-14-14 22-11-4-7 6v-8l-14-2z"
+            fill="#ffffff"
+          />
+        </svg>
+      );
+  }
+};
+
+export interface PromoShowcaseProps {
   variant?: 'sidebar' | 'banner';
   initialIndex?: number;
 }
@@ -497,310 +352,398 @@ export const PromoShowcase: React.FC<PromoShowcaseProps> = ({
   variant = 'sidebar',
   initialIndex = 0,
 }) => {
-  const { formatAmount, playSound, notify } = useCashUp();
-  const [activeIdx, setActiveIdx] = useState(
-    initialIndex % LUXURY_CAMPAIGNS.length
+  const { formatAmount, playSound, settings } = useCashUp();
+
+  const [activeIdx, setActiveIdx] = useState<number>(
+    initialIndex % AD_CAMPAIGNS.length
   );
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedEditionIdx, setSelectedEditionIdx] = useState(0);
-  const [reservedIds, setReservedIds] = useState<Record<string, boolean>>({});
+  const [dismissed, setDismissed] = useState<boolean>(false);
+  const [hiddenCompletely, setHiddenCompletely] = useState<boolean>(false);
+  const [paused, setPaused] = useState<boolean>(false);
+  const [siteModalOpen, setSiteModalOpen] = useState<boolean>(false);
+  const [orderSent, setOrderSent] = useState<boolean>(false);
+
+  const ad = AD_CAMPAIGNS[activeIdx] ?? AD_CAMPAIGNS[0]!;
 
   useEffect(() => {
-    if (modalOpen) return;
+    if (dismissed || hiddenCompletely || paused || siteModalOpen || !settings.animationsEnabled) {
+      return;
+    }
     const timer = window.setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % LUXURY_CAMPAIGNS.length);
-      setSelectedEditionIdx(0);
-    }, 14000);
+      setActiveIdx((prev) => (prev + 1) % AD_CAMPAIGNS.length);
+    }, 11000);
     return () => window.clearInterval(timer);
-  }, [modalOpen]);
+  }, [dismissed, hiddenCompletely, paused, siteModalOpen, settings.animationsEnabled]);
 
-  const campaign = LUXURY_CAMPAIGNS[activeIdx]!;
-  const edition = campaign.editions[selectedEditionIdx] ?? campaign.editions[0]!;
-  const configuredPriceUsd = Math.round(
-    campaign.basePriceUsd * edition.priceMultiplier
-  );
-  const reserveKey = `${campaign.id}-${edition.id}`;
+  if (hiddenCompletely) {
+    return null;
+  }
 
-  const openModal = () => {
-    playSound('click');
-    setModalOpen(true);
-  };
+  if (dismissed) {
+    return (
+      <div className={styles.dismissedBar}>
+        <span>Объявление скрыто</span>
+        <div className={styles.dismissedActions}>
+          <button
+            type="button"
+            className={styles.dismissedLink}
+            onClick={() => {
+              playSound('click');
+              setActiveIdx((prev) => (prev + 1) % AD_CAMPAIGNS.length);
+              setDismissed(false);
+            }}
+          >
+            Показать другое
+          </button>
+          <button
+            type="button"
+            className={styles.dismissedLink}
+            aria-label="Скрыть рекламный блок полностью"
+            onClick={() => setHiddenCompletely(true)}
+          >
+            ×
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  const handleConciergeRequest = () => {
+  const openAdvertiserSite = () => {
     playSound('select');
-    setReservedIds((prev) => ({ ...prev, [reserveKey]: true }));
-    notify({
-      type: 'success',
-      title: `${campaign.shortBrand} · Приватный показ`,
-      description: `Спецификация ${edition.code} (${edition.name}) сохранена в листе ожидания.`,
-    });
+    setOrderSent(false);
+    setSiteModalOpen(true);
   };
+
+  const handleCloseAd = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    playSound('click');
+    setDismissed(true);
+  };
+
+  const formattedPrice = `${ad.pricePrefix ?? ''}${formatAmount(ad.priceUsd)}`;
+  const formattedOldPrice = ad.oldPriceUsd ? formatAmount(ad.oldPriceUsd) : null;
 
   return (
     <>
       {variant === 'sidebar' ? (
-        <aside className={styles.sidebarCard} aria-label="Партнёрская витрина">
-          <div className={styles.topMeta}>
-            <span className={styles.adTag}>ПАРТНЁР · ВИТРИНА</span>
-            <div className={styles.navDots} role="tablist" aria-label="Выбор коллекции">
-              {LUXURY_CAMPAIGNS.map((item, idx) => (
+        <aside
+          aria-label={`Реклама ${ad.brand}`}
+          className={styles.sidebarCard}
+          style={{ background: ad.bgGradient, color: ad.textColor }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div className={styles.glowOrb} />
+
+          {/* Top Bar: Brand Logo + Ad badge + Close X */}
+          <div className={styles.topBar}>
+            <div className={styles.brandMark}>
+              <span
+                className={styles.brandIconWrap}
+                style={{ backgroundColor: ad.artBg }}
+              >
+                <BrandLogoIcon id={ad.id} color={ad.textColor} />
+              </span>
+              <span className={styles.brandName}>{ad.brand}</span>
+            </div>
+
+            <div className={styles.topRightControls}>
+              <span
+                className={styles.adPill}
+                style={{ backgroundColor: ad.pillBg, color: ad.pillText }}
+              >
+                Реклама
+              </span>
+              <button
+                type="button"
+                className={styles.closeBtn}
+                style={{ backgroundColor: ad.pillBg, color: ad.pillText }}
+                onClick={handleCloseAd}
+                aria-label="Закрыть рекламу"
+                title="Закрыть рекламу"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          </div>
+
+          {/* Minimalist Product Art */}
+          <div
+            className={styles.sidebarVisual}
+            style={{ backgroundColor: ad.artBg }}
+          >
+            <ProductMinimalArt id={ad.id} size={68} />
+          </div>
+
+          {/* Product + Ad Quote */}
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <div className={styles.productTitle}>{ad.product}</div>
+            <p className={styles.quoteText}>{ad.quote}</p>
+          </div>
+
+          {/* Price + Promo Tag */}
+          <div className={styles.priceRow}>
+            <div className={styles.priceGroup}>
+              <span className={`${styles.currentPrice} tabular`}>
+                {formattedPrice}
+              </span>
+              {formattedOldPrice && (
+                <span className={`${styles.oldPrice} tabular`}>
+                  {formattedOldPrice}
+                </span>
+              )}
+            </div>
+            <span
+              className={styles.promoTag}
+              style={{ backgroundColor: ad.badgeBg, color: ad.badgeText }}
+            >
+              {ad.promoBadge}
+            </span>
+          </div>
+
+          {/* Go to Advertiser Website CTA */}
+          <button
+            type="button"
+            className={styles.ctaButton}
+            style={{ backgroundColor: ad.ctaBg, color: ad.ctaText }}
+            onClick={openAdvertiserSite}
+          >
+            Перейти на сайт <ExternalLink size={13} />
+          </button>
+
+          {/* Minimal Dots */}
+          <div className={styles.dotsRow} role="tablist" aria-label="Рекламные баннеры">
+            {AD_CAMPAIGNS.map((item, idx) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={idx === activeIdx}
+                aria-label={item.brand}
+                className={`${styles.dotBtn} ${
+                  idx === activeIdx ? styles.dotBtnActive : ''
+                }`}
+                style={{ backgroundColor: ad.textColor }}
+                onClick={() => {
+                  playSound('click');
+                  setActiveIdx(idx);
+                }}
+              />
+            ))}
+          </div>
+        </aside>
+      ) : (
+        <section
+          aria-label={`Реклама ${ad.brand}`}
+          className={styles.bannerCard}
+          style={{ background: ad.bgGradient, color: ad.textColor }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div className={styles.glowOrb} />
+
+          {/* Left Minimalist Illustration */}
+          <div
+            className={styles.bannerArtBox}
+            style={{ backgroundColor: ad.artBg }}
+          >
+            <ProductMinimalArt id={ad.id} size={82} />
+          </div>
+
+          {/* Center: Logo + Product + Quote + Price */}
+          <div className={styles.bannerCenter}>
+            <div className={styles.brandMark}>
+              <span
+                className={styles.brandIconWrap}
+                style={{ backgroundColor: ad.artBg }}
+              >
+                <BrandLogoIcon id={ad.id} color={ad.textColor} />
+              </span>
+              <span className={styles.brandName}>{ad.brand}</span>
+              <span
+                className={styles.promoTag}
+                style={{ backgroundColor: ad.badgeBg, color: ad.badgeText, marginLeft: 4 }}
+              >
+                {ad.promoBadge}
+              </span>
+            </div>
+
+            <div className={styles.bannerProductTitle}>{ad.product}</div>
+            <p className={styles.bannerQuote}>{ad.quote}</p>
+
+            <div className={styles.priceGroup} style={{ marginTop: 2 }}>
+              <span className={`${styles.currentPrice} tabular`} style={{ fontSize: '1.14rem' }}>
+                {formattedPrice}
+              </span>
+              {formattedOldPrice && (
+                <span className={`${styles.oldPrice} tabular`} style={{ fontSize: '0.82rem' }}>
+                  {formattedOldPrice}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Ad badge + Close X + CTA + Dots */}
+          <div className={styles.bannerRight}>
+            <div className={styles.topRightControls}>
+              <span
+                className={styles.adPill}
+                style={{ backgroundColor: ad.pillBg, color: ad.pillText }}
+              >
+                Реклама · {ad.domain}
+              </span>
+              <button
+                type="button"
+                className={styles.closeBtn}
+                style={{ backgroundColor: ad.pillBg, color: ad.pillText }}
+                onClick={handleCloseAd}
+                aria-label="Закрыть рекламу"
+                title="Закрыть рекламу"
+              >
+                <X size={12} />
+              </button>
+            </div>
+
+            <button
+              type="button"
+              className={styles.bannerCta}
+              style={{ backgroundColor: ad.ctaBg, color: ad.ctaText }}
+              onClick={openAdvertiserSite}
+            >
+              Перейти на сайт <ExternalLink size={14} />
+            </button>
+
+            <div className={styles.dotsRow}>
+              {AD_CAMPAIGNS.map((item, idx) => (
                 <button
                   key={item.id}
                   type="button"
-                  role="tab"
-                  aria-selected={idx === activeIdx}
-                  aria-label={item.shortBrand}
+                  aria-label={item.brand}
                   className={`${styles.dotBtn} ${
                     idx === activeIdx ? styles.dotBtnActive : ''
                   }`}
+                  style={{ backgroundColor: ad.textColor }}
                   onClick={() => {
                     playSound('click');
                     setActiveIdx(idx);
-                    setSelectedEditionIdx(0);
                   }}
                 />
               ))}
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Clean Minimalist Advertiser Mini-Website Modal */}
+      <Modal
+        open={siteModalOpen}
+        title={`${ad.brand} — ${ad.product}`}
+        subtitle={`Официальная витрина ${ad.domain}`}
+        onClose={() => setSiteModalOpen(false)}
+      >
+        <div>
+          <div className={styles.domainBar}>
+            <Globe size={13} />
+            <span>https://{ad.domain}</span>
+          </div>
 
           <div
-            className={styles.sidebarArtBox}
-            onClick={openModal}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') openModal();
-            }}
-            aria-label={`Подробнее: ${campaign.shortBrand} ${campaign.title}`}
+            className={styles.sitePreviewHero}
+            style={{ background: ad.bgGradient, color: ad.textColor }}
           >
-            <span className={styles.serialBadge}>{campaign.serialStamp}</span>
-            <CampaignArtworkSvg
-              id={campaign.id}
-              primary={edition.primaryHex}
-              secondary={edition.secondaryHex}
-              size="compact"
-            />
+            <div
+              style={{
+                width: 88,
+                height: 88,
+                borderRadius: 16,
+                backgroundColor: ad.artBg,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <ProductMinimalArt id={ad.id} size={74} />
+            </div>
+
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <strong style={{ fontSize: '0.8rem', letterSpacing: '0.05em' }}>
+                  {ad.brand}
+                </strong>
+                <span
+                  className={styles.promoTag}
+                  style={{ backgroundColor: ad.badgeBg, color: ad.badgeText }}
+                >
+                  {ad.promoBadge}
+                </span>
+              </div>
+              <div style={{ fontSize: '1.15rem', fontWeight: 900 }}>{ad.product}</div>
+              <p style={{ fontSize: '0.86rem', fontStyle: 'italic', marginTop: 4, opacity: 0.95 }}>
+                {ad.quote}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginTop: 10 }}>
+                <span className="mono" style={{ fontSize: '1.25rem', fontWeight: 900 }}>
+                  {formattedPrice}
+                </span>
+                {formattedOldPrice && (
+                  <span
+                    className="mono"
+                    style={{ fontSize: '0.85rem', textDecoration: 'line-through', opacity: 0.75 }}
+                  >
+                    {formattedOldPrice}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
 
-          <div>
-            <div className={styles.originLabel}>{campaign.origin}</div>
-            <div className={styles.sidebarTitle}>{campaign.title}</div>
-            <p className={styles.sidebarTagline}>{campaign.tagline}</p>
-          </div>
-
-          <div className={styles.microSpecs}>
-            {campaign.specs.slice(0, 2).map((sp) => (
-              <div key={sp.label} className={styles.specChip}>
-                <span>{sp.label}</span>
-                <strong title={sp.value}>{sp.value}</strong>
+          <div className={styles.perksList}>
+            {ad.perks.map((perk) => (
+              <div key={perk} className={styles.perkCard}>
+                ✓ {perk}
               </div>
             ))}
           </div>
 
-          <div className={styles.sidebarFooter}>
-            <div className={styles.priceLabel}>
-              <span>Ориентир бутика</span>
-              <strong>{formatAmount(configuredPriceUsd)}</strong>
-            </div>
-            <button type="button" className={styles.ctaMini} onClick={openModal}>
-              {campaign.ctaLabel} <ArrowUpRight size={13} />
-            </button>
-          </div>
-        </aside>
-      ) : (
-        <section className={styles.bannerWrap} aria-label="Спецпроект партнёров">
           <div
-            className={styles.bannerVisual}
-            onClick={openModal}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') openModal();
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              gap: 10,
+              marginTop: 18,
             }}
           >
-            <div className={styles.blueprintGrid} />
-            <span className={styles.serialBadge}>{campaign.serialStamp}</span>
-            <CampaignArtworkSvg
-              id={campaign.id}
-              primary={edition.primaryHex}
-              secondary={edition.secondaryHex}
-              size="large"
-            />
-            <span className={styles.cornerCoord}>{campaign.coordLabel}</span>
-          </div>
-
-          <div className={styles.bannerBody}>
-            <div>
-              <div className={styles.bannerTopRow}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span className={styles.adTag}>СПЕЦПРОЕКТ · РЕКЛАМА</span>
-                  <span className={styles.originLabel}>{campaign.origin}</span>
-                </div>
-                <div className={styles.brandTabs}>
-                  {LUXURY_CAMPAIGNS.map((c, idx) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      className={`${styles.brandTab} ${
-                        idx === activeIdx ? styles.brandTabActive : ''
-                      }`}
-                      onClick={() => {
-                        playSound('click');
-                        setActiveIdx(idx);
-                        setSelectedEditionIdx(0);
-                      }}
-                    >
-                      {c.shortBrand}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <h3 className={styles.bannerHeadline} style={{ marginTop: 10 }}>
-                {campaign.shortBrand} — {campaign.title}
-              </h3>
-              <p className={styles.bannerDesc} style={{ marginTop: 6 }}>
-                {campaign.tagline}
-              </p>
-            </div>
-
-            <div className={styles.bannerSpecsRow}>
-              {campaign.specs.map((s) => (
-                <div key={s.label} className={styles.bannerSpecBox}>
-                  <span>{s.label}</span>
-                  <strong>{s.value}</strong>
-                </div>
-              ))}
-            </div>
-
-            <div className={styles.bannerBottomRow}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-                <div>
-                  <span
-                    style={{
-                      display: 'block',
-                      fontSize: '0.66rem',
-                      textTransform: 'uppercase',
-                      color: 'var(--text-muted)',
-                    }}
-                  >
-                    Стоимость исполнения
-                  </span>
-                  <strong className="mono" style={{ fontSize: '1.02rem' }}>
-                    {formatAmount(configuredPriceUsd)}
-                  </strong>
-                </div>
-                <span className={styles.boutiqueCities}>
-                  <Compass size={12} style={{ verticalAlign: '-2px', marginRight: 4 }} />
-                  {campaign.boutiques}
-                </span>
-              </div>
-
-              <button type="button" className="btn btnGold btnSm" onClick={openModal}>
-                <Sparkles size={14} /> {campaign.ctaLabel} <ArrowUpRight size={14} />
-              </button>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Detailed Interactive Boutique Modal */}
-      <Modal
-        open={modalOpen}
-        title={`${campaign.shortBrand} — ${campaign.title}`}
-        subtitle={`${campaign.origin} · ${campaign.serialStamp}`}
-        onClose={() => setModalOpen(false)}
-        wide
-        footer={
-          <>
             <button
               type="button"
               className="btn btnSecondary"
-              onClick={() => setModalOpen(false)}
+              onClick={() => setSiteModalOpen(false)}
             >
-              Закрыть витрину
+              Закрыть
             </button>
             <button
               type="button"
               className="btn btnPrimary"
-              onClick={handleConciergeRequest}
-            >
-              {reservedIds[reserveKey] ? (
-                <>
-                  <CheckCircle2 size={16} /> В листе ожидания ({edition.code})
-                </>
-              ) : (
-                <>Запросить приватный показ · {formatAmount(configuredPriceUsd)}</>
-              )}
-            </button>
-          </>
-        }
-      >
-        <div className={styles.modalStage}>
-          <div className={styles.blueprintGrid} />
-          <span className={styles.serialBadge}>
-            {edition.code} · {campaign.coordLabel}
-          </span>
-          <CampaignArtworkSvg
-            id={campaign.id}
-            primary={edition.primaryHex}
-            secondary={edition.secondaryHex}
-            size="large"
-          />
-        </div>
-
-        <div style={{ marginBottom: 8, fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-          Выберите исполнение серии
-        </div>
-        <div className={styles.editionRow}>
-          {campaign.editions.map((ed, idx) => (
-            <button
-              key={ed.id}
-              type="button"
-              className={`${styles.editionPill} ${
-                idx === selectedEditionIdx ? styles.editionPillActive : ''
-              }`}
+              style={{
+                background: orderSent ? undefined : ad.bgGradient,
+                color: orderSent ? undefined : ad.textColor,
+                border: 'none',
+              }}
               onClick={() => {
-                playSound('click');
-                setSelectedEditionIdx(idx);
+                playSound('win');
+                setOrderSent(true);
               }}
             >
-              <span
-                className={styles.swatchDot}
-                style={{
-                  background: `linear-gradient(135deg, ${ed.primaryHex}, ${ed.secondaryHex})`,
-                }}
-              />
-              <span>{ed.name}</span>
-              <span className="mono" style={{ fontSize: '0.7rem', opacity: 0.7 }}>
-                {ed.code}
-              </span>
+              {orderSent ? (
+                <>
+                  <Check size={16} /> Промо-предложение активировано
+                </>
+              ) : (
+                ad.orderActionLabel
+              )}
             </button>
-          ))}
-        </div>
-
-        <p
-          style={{
-            fontSize: '0.9rem',
-            lineHeight: 1.65,
-            color: 'var(--text-secondary)',
-            marginBottom: 16,
-          }}
-        >
-          {campaign.editorialStory}
-        </p>
-
-        <div className={styles.bannerSpecsRow} style={{ marginBottom: 14 }}>
-          {campaign.specs.map((s) => (
-            <div key={s.label} className={styles.bannerSpecBox}>
-              <span>{s.label}</span>
-              <strong>{s.value}</strong>
-            </div>
-          ))}
-        </div>
-
-        <div className={styles.boutiqueCities}>
-          Флагманские салоны: {campaign.boutiques}
+          </div>
         </div>
       </Modal>
     </>

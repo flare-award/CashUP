@@ -1,435 +1,386 @@
-/* ==========================================================================
-   Editorial Luxury & Avant-Garde Sponsorship Showcase
-   ========================================================================== */
-
 .sidebarCard {
   position: relative;
-  border-radius: 14px;
-  overflow: hidden;
-  background:
-    radial-gradient(120% 90% at 85% 10%, rgba(16, 185, 129, 0.14), transparent 60%),
-    radial-gradient(100% 80% at 10% 95%, rgba(245, 158, 11, 0.11), transparent 60%),
-    var(--bg-surface-elevated);
-  border: 1px solid var(--border-strong);
+  border-radius: 16px;
   padding: 13px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  box-shadow: var(--shadow-sm);
-  transition:
-    border-color var(--dur-normal) var(--ease-out),
-    transform var(--dur-normal) var(--ease-out);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .sidebarCard:hover {
-  border-color: rgba(245, 158, 11, 0.42);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
 }
 
-.topMeta {
+.bannerCard {
+  position: relative;
+  border-radius: 20px;
+  padding: 18px 22px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 112px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bannerCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
+/* Soft decorative ambient circle behind product art */
+.glowOrb {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  top: -36px;
+  right: -36px;
+}
+
+/* Top bar: Logo + Ad label + Close X */
+.topBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 6px;
+  position: relative;
+  z-index: 2;
 }
 
-.adTag {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid var(--border-subtle);
-  background-color: var(--bg-surface-subtle);
-}
-
-.navDots {
+.brandMark {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  min-width: 0;
 }
 
-.dotBtn {
-  width: 16px;
-  height: 6px;
-  border-radius: 999px;
-  background-color: var(--border-strong);
-  transition: all var(--dur-fast) var(--ease-out);
-}
-
-.dotBtnActive {
+.brandIconWrap {
   width: 22px;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-gold));
-}
-
-.sidebarArtBox {
-  position: relative;
-  height: 122px;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #070a10 0%, #101724 60%, #0b1318 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-  display: flex;
+  height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  flex-shrink: 0;
 }
 
-.serialBadge {
-  position: absolute;
-  top: 7px;
-  left: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.09em;
-  color: rgba(226, 232, 240, 0.78);
-  background: rgba(7, 10, 16, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 2px 6px;
-  border-radius: 4px;
-  backdrop-filter: blur(6px);
-}
-
-.originLabel {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
+.brandName {
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--accent-gold);
-}
-
-.sidebarTitle {
-  font-size: 0.92rem;
-  font-weight: 800;
-  line-height: 1.24;
-  letter-spacing: -0.015em;
-  color: var(--text-primary);
-}
-
-.sidebarTagline {
-  font-size: 0.75rem;
-  line-height: 1.42;
-  color: var(--text-secondary);
-}
-
-.microSpecs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.specChip {
-  padding: 5px 7px;
-  border-radius: 7px;
-  background-color: var(--bg-surface-subtle);
-  border: 1px solid var(--border-subtle);
-}
-
-.specChip span {
-  display: block;
-  font-size: 0.6rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.specChip strong {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.71rem;
-  color: var(--text-primary);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.sidebarFooter {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 6px;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.priceLabel {
-  display: flex;
-  flex-direction: column;
-}
-
-.priceLabel span {
-  font-size: 0.58rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-}
-
-.priceLabel strong {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.ctaMini {
+.topRightControls {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 0.73rem;
+  flex-shrink: 0;
+}
+
+.adPill {
+  font-size: 0.62rem;
   font-weight: 700;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(245, 158, 11, 0.16));
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  color: var(--text-primary);
-  transition: all var(--dur-fast) var(--ease-out);
+  padding: 2px 6px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
 }
 
-.ctaMini:hover {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.28), rgba(245, 158, 11, 0.28));
-  border-color: var(--accent-gold);
+.closeBtn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  opacity: 0.85;
 }
 
-/* ==========================================================================
-   Horizontal Editorial Banner Variant
-   ========================================================================== */
-
-.bannerWrap {
-  position: relative;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  background:
-    radial-gradient(80% 120% at 100% 0%, rgba(16, 185, 129, 0.13), transparent 58%),
-    radial-gradient(70% 110% at 0% 100%, rgba(245, 158, 11, 0.11), transparent 55%),
-    var(--bg-surface);
-  border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-md);
-  display: grid;
-  grid-template-columns: 340px 1fr;
+.closeBtn:hover {
+  opacity: 1;
+  transform: scale(1.08);
 }
 
-@media (max-width: 920px) {
-  .bannerWrap {
-    grid-template-columns: 1fr;
-  }
-}
-
-.bannerVisual {
-  position: relative;
-  min-height: 230px;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.14), transparent 70%),
-    linear-gradient(150deg, #06080e 0%, #0f1724 55%, #091217 100%);
-  border-right: 1px solid var(--border-subtle);
+/* Sidebar visual + copy */
+.sidebarVisual {
+  height: 82px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 18px;
-  cursor: pointer;
+  position: relative;
+  z-index: 2;
 }
 
-@media (max-width: 920px) {
-  .bannerVisual {
-    border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
-    min-height: 195px;
-  }
+.productTitle {
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
-.blueprintGrid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 24px 24px;
-  pointer-events: none;
+.quoteText {
+  font-size: 0.76rem;
+  line-height: 1.35;
+  font-style: italic;
+  margin-top: 3px;
+  opacity: 0.94;
 }
 
-.cornerCoord {
-  position: absolute;
-  bottom: 10px;
-  right: 12px;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  color: rgba(148, 163, 184, 0.7);
-}
-
-.bannerBody {
-  padding: 22px 26px;
+/* Price + Discount row */
+.priceRow {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 14px;
+  gap: 6px;
+  position: relative;
+  z-index: 2;
 }
 
-.bannerTopRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.brandTabs {
-  display: flex;
-  align-items: center;
+.priceGroup {
+  display: inline-flex;
+  align-items: baseline;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.brandTab {
-  padding: 4px 10px;
-  border-radius: 999px;
+.currentPrice {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  background-color: var(--bg-surface-subtle);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  transition: all var(--dur-fast) var(--ease-out);
+  font-size: 1.02rem;
+  font-weight: 900;
 }
 
-.brandTabActive {
-  background-color: var(--accent-primary-soft);
-  border-color: var(--accent-primary);
-  color: var(--accent-primary);
+.oldPrice {
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  text-decoration: line-through;
+  opacity: 0.72;
 }
 
-.bannerHeadline {
-  font-size: clamp(1.18rem, 2vw, 1.45rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-top: 2px;
-}
-
-.bannerDesc {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  line-height: 1.55;
-  max-width: 680px;
-}
-
-.bannerSpecsRow {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-}
-
-@media (max-width: 680px) {
-  .bannerSpecsRow {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.bannerSpecBox {
-  padding: 9px 11px;
-  border-radius: var(--radius-sm);
-  background-color: var(--bg-surface-subtle);
-  border: 1px solid var(--border-subtle);
-}
-
-.bannerSpecBox span {
-  display: block;
+.promoTag {
   font-size: 0.66rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  margin-bottom: 2px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 
-.bannerSpecBox strong {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  color: var(--text-primary);
-}
-
-.bannerBottomRow {
-  display: flex;
+/* CTA Button ("Перейти на сайт") */
+.ctaButton {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.boutiqueCities {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  letter-spacing: 0.06em;
-}
-
-/* ==========================================================================
-   Modal Showcase Lookbook
-   ========================================================================== */
-
-.modalStage {
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
   position: relative;
-  height: 220px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(145deg, #06090f 0%, #101927 55%, #091318 100%);
-  border: 1px solid var(--border-strong);
+  z-index: 2;
+}
+
+.ctaButton:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+/* Dots switcher */
+.dotsRow {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  margin-bottom: 16px;
+  gap: 5px;
+  position: relative;
+  z-index: 2;
 }
 
-.editionRow {
+.dotBtn {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.2s ease, opacity 0.2s ease;
+  opacity: 0.45;
+}
+
+.dotBtnActive {
+  width: 16px;
+  opacity: 1;
+}
+
+/* Horizontal Banner specifics */
+.bannerArtBox {
+  width: 112px;
+  height: 96px;
+  border-radius: 16px;
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
-.editionPill {
+.bannerCenter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.bannerProductTitle {
+  font-size: 1.18rem;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.bannerQuote {
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+.bannerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.bannerCta {
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.bannerCta:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+/* Dismissed compact bar */
+.dismissedBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 11px;
+  border-radius: 10px;
+  background-color: var(--bg-surface-subtle);
+  border: 1px dashed var(--border-subtle);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.dismissedActions {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 12px;
-  border-radius: 999px;
-  font-size: 0.8rem;
+}
+
+.dismissedLink {
+  color: var(--text-secondary);
   font-weight: 600;
+  font-size: 0.73rem;
+  cursor: pointer;
+}
+
+.dismissedLink:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/* Mini Storefront Modal */
+.sitePreviewHero {
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.domainBar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
   background-color: var(--bg-surface-subtle);
   border: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   color: var(--text-secondary);
+  margin-bottom: 12px;
 }
 
-.editionPillActive {
-  border-color: var(--accent-gold);
+.perksList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.perkCard {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.82rem;
+  font-weight: 600;
   color: var(--text-primary);
-  background-color: rgba(245, 158, 11, 0.12);
 }
 
-.swatchDot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-}
-
-@keyframes slowOrbitSpin {
-  from {
-    transform: rotate(0deg);
+@media (max-width: 780px) {
+  .bannerCard {
+    grid-template-columns: 84px 1fr;
+    padding: 15px;
+    gap: 14px;
   }
-  to {
-    transform: rotate(360deg);
+
+  .bannerArtBox {
+    width: 84px;
+    height: 84px;
   }
-}
 
-.spinSlow {
-  transform-origin: center;
-  animation: slowOrbitSpin 18s linear infinite;
-}
-
-:root[data-motion='none'] .spinSlow {
-  animation: none;
+  .bannerRight {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+  }
 }

@@ -82,26 +82,36 @@ describe('CashUP End-to-End UI Integration', () => {
     expect(document.documentElement.getAttribute('data-motion')).toBe('none');
   });
 
-  it('renders detailed partner advertisement showcases in sidebar and home page with interactive dossier modal', async () => {
+  it('renders colorful minimalist ads with logo, quote, price, "Перейти на сайт", and working close button', async () => {
     const { container } = renderCashUp('/');
     fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
       target: { value: 'Collector' },
     });
     fireEvent.click(screen.getByRole('button', { name: /Создать профиль и начать/i }));
 
-    // Ensure ad copy never breaks immersion by calling itself fake/fictional
+    // Ensure ad copy never breaks immersion
     expect(container.textContent).not.toMatch(/вымышлен/i);
 
-    // Click to open interactive luxury showcase modal
-    const detailButtons = screen.getAllByRole('button', {
-      name: /Открыть хронограф|Конфигуратор GT|Ноты композиции|Акустический стенд/i,
+    // Click "Перейти на сайт" button on the ad
+    const visitSiteButtons = screen.getAllByRole('button', {
+      name: /Перейти на сайт/i,
     });
-    expect(detailButtons.length).toBeGreaterThan(0);
-    fireEvent.click(detailButtons[0]!);
+    expect(visitSiteButtons.length).toBeGreaterThan(0);
+    fireEvent.click(visitSiteButtons[0]!);
 
     await waitFor(() => {
       expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
+
+    // Close modal, then test closing the ad banner itself via "Закрыть рекламу"
+    fireEvent.click(screen.getByRole('button', { name: /^Закрыть$/i }));
+    const closeAdButtons = screen.getAllByRole('button', {
+      name: /Закрыть рекламу/i,
+    });
+    expect(closeAdButtons.length).toBeGreaterThan(0);
+    fireEvent.click(closeAdButtons[0]!);
+
+    expect(screen.getByText('Объявление скрыто')).toBeInTheDocument();
   });
 
   it('renders every single one of the 15 registered games without console or render errors', () => {
