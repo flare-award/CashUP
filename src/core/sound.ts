@@ -11,6 +11,11 @@ export type SoundEffectName =
   | 'cupSwap'
   | 'plinkoPeg'
   | 'upgradeCharge'
+  | 'revolverSpin'
+  | 'dryClick'
+  | 'gunshot'
+  | 'coinFlip'
+  | 'scratch'
   | 'win'
   | 'loss'
   | 'roundEnd';
@@ -120,6 +125,28 @@ class SoundEngine {
           break;
         case 'upgradeCharge':
           this.playTone(ctx, 240, 0.28, 'sine', 0.18, 0, 660);
+          break;
+        case 'revolverSpin':
+          [0, 0.045, 0.095, 0.15, 0.215, 0.29].forEach((d, idx) => {
+            this.playTone(ctx, 820 - idx * 45, 0.025, 'triangle', 0.14, d, 520);
+          });
+          break;
+        case 'dryClick':
+          this.playTone(ctx, 1320, 0.022, 'square', 0.18, 0, 420);
+          this.playTone(ctx, 640, 0.035, 'triangle', 0.14, 0.012, 260);
+          break;
+        case 'gunshot':
+          this.playTone(ctx, 190, 0.26, 'sawtooth', 0.34, 0, 38);
+          this.playTone(ctx, 420, 0.08, 'square', 0.26, 0, 95);
+          this.playTone(ctx, 110, 0.34, 'triangle', 0.28, 0.02, 32);
+          break;
+        case 'coinFlip':
+          this.playTone(ctx, 1180, 0.07, 'sine', 0.16, 0, 1760);
+          this.playTone(ctx, 1560, 0.11, 'sine', 0.14, 0.05, 1320);
+          break;
+        case 'scratch':
+          this.playTone(ctx, 460, 0.04, 'sawtooth', 0.09, 0, 680);
+          this.playTone(ctx, 620, 0.04, 'triangle', 0.08, 0.03, 490);
           break;
         case 'combo':
           [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {

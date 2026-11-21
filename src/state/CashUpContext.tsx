@@ -216,7 +216,7 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     soundEngine.configure(soundEnabled, soundVolume);
   }, [state.settings, prefersReducedMotion]);
 
-  // Local NPC simulated activity ticker
+  // Local NPC live hall winner ticker
   useEffect(() => {
     if (!state.settings.npcFeedEnabled) return;
     const interval = window.setInterval(() => {
@@ -225,10 +225,10 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const item = generateNpcActivity();
       const next: CashUpSaveData = {
         ...cur,
-        npcHistory: [item, ...cur.npcHistory].slice(0, 18),
+        npcHistory: [item, ...cur.npcHistory].slice(0, 20),
       };
       commitState(next);
-    }, 14_000);
+    }, 6_500);
     return () => window.clearInterval(interval);
   }, [state.settings.npcFeedEnabled, commitState]);
 
@@ -536,7 +536,30 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return { ok: false, error: res.error };
       }
 
-      replaceProfileInState(res.profile);
+      if (input.outcome === 'win' && res.entry && res.entry.payout > 0) {
+        const cur = stateRef.current;
+        const playerWinFeedItem = {
+          id: generateId('npc'),
+          npcId: res.profile.id,
+          nickname: res.profile.nickname,
+          avatarId: res.profile.avatarId,
+          styleLabel: 'Игрок зала',
+          gameId: res.entry.gameId,
+          gameName: res.entry.gameName,
+          actionType: 'win' as const,
+          amount: res.entry.payout,
+          multiplier: res.entry.multiplier ?? undefined,
+          timestamp: res.entry.timestamp,
+        };
+        commitState({
+          ...cur,
+          activeProfileId: res.profile.id,
+          profiles: cur.profiles.map((p) => (p.id === res.profile.id ? res.profile : p)),
+          npcHistory: [playerWinFeedItem, ...cur.npcHistory].slice(0, 20),
+        });
+      } else {
+        replaceProfileInState(res.profile);
+      }
 
       if (res.entry && res.entry.payout > 0) {
         emitBalanceDelta(res.entry.payout);

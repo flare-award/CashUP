@@ -114,15 +114,21 @@ describe('CashUP End-to-End UI Integration', () => {
     expect(screen.getByText('Объявление скрыто')).toBeInTheDocument();
   });
 
-  it('renders every single one of the 15 registered games without console or render errors', () => {
+  it('renders live hall winner ribbon directly under hero and renders all 23 registered games without errors', () => {
     const first = renderCashUp('/');
     fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
       target: { value: 'AllGamesQA' },
     });
     fireEvent.click(screen.getByRole('button', { name: /Создать профиль и начать/i }));
+
+    // Verify Live Hall Ribbon is rendered on HomePage
+    expect(
+      screen.getByLabelText('Лента выигрышей прямого эфира зала')
+    ).toBeInTheDocument();
+
     first.unmount();
 
-    expect(GAME_CATALOG).toHaveLength(15);
+    expect(GAME_CATALOG).toHaveLength(23);
 
     for (const game of GAME_CATALOG) {
       const view = renderCashUp(`/games/${game.id}`);
@@ -161,6 +167,43 @@ describe('CashUP End-to-End UI Integration', () => {
 
     renderCashUp('/statistics');
     expect(screen.getByText('Сыграно раундов')).toBeInTheDocument();
+  });
+
+  it('starts Russian Roulette (with 3 modes & pistol spin) and Podkidnoy Durak card match', async () => {
+    const setup = renderCashUp('/settings');
+    fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
+      target: { value: 'Duelist' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Создать профиль и начать/i }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /Игровые анимации/i }));
+    setup.unmount();
+
+    // Test Russian Roulette Circle of 5 mode & pistol spin
+    const rrView = renderCashUp('/games/russian-roulette');
+    fireEvent.click(screen.getByRole('button', { name: /Круговой стол/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Сесть за стол/i }));
+
+    const spinPistolBtn = screen.getByRole('button', {
+      name: /Крутить пистолет/i,
+    });
+    expect(spinPistolBtn).toBeInTheDocument();
+    fireEvent.click(spinPistolBtn);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('button', { name: /Крутить пистолет/i })
+      ).not.toBeInTheDocument();
+    });
+    rrView.unmount();
+
+    // Test Durak 36-card deal
+    const durakView = renderCashUp('/games/durak');
+    fireEvent.click(screen.getByRole('button', { name: /Раздать 36 карт/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/Козырь:/i)).toBeInTheDocument();
+    });
+    durakView.unmount();
   });
 
   it('supports creating multiple profiles with currency preview and validates imported JSON saves', async () => {

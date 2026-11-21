@@ -43,6 +43,14 @@ export const GAME_IDS: readonly GameId[] = [
   'risk-roulette',
   'keno',
   'crash',
+  'russian-roulette',
+  'durak',
+  'towers',
+  'coin-flip',
+  'wheel-of-fortune',
+  'sic-bo',
+  'video-poker',
+  'scratch-cards',
 ] as const;
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -101,6 +109,14 @@ const gameIdSchema = z.enum([
   'risk-roulette',
   'keno',
   'crash',
+  'russian-roulette',
+  'durak',
+  'towers',
+  'coin-flip',
+  'wheel-of-fortune',
+  'sic-bo',
+  'video-poker',
+  'scratch-cards',
 ]);
 
 const currencySchema = z.enum(['RUB', 'MDL', 'USD', 'EUR', 'KZT', 'CNY']);

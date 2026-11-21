@@ -21,6 +21,7 @@ import {
   formatExchangeRateHint,
   formatSignedCurrency,
 } from '../../core/currency';
+import { GAME_CATALOG } from '../../games/registry';
 import { useCashUp } from '../../state/CashUpContext';
 import { CurrencyCode, GameId } from '../../types';
 import { PromoShowcase } from '../ads/PromoShowcase';
@@ -45,6 +46,14 @@ const SHORT_GAME_NAMES: Record<GameId, string> = {
   'risk-roulette': 'Риск-рулетка',
   keno: 'Кено',
   crash: 'Crash: Орбита',
+  'russian-roulette': 'Русская рулетка',
+  durak: 'Подкидной Дурак',
+  towers: 'Башня',
+  'coin-flip': 'Орёл или Решка',
+  'wheel-of-fortune': 'Колесо Фортуны',
+  'sic-bo': 'Сик Бо',
+  'video-poker': 'Видеопокер',
+  'scratch-cards': 'Золотой Скретч',
 };
 
 export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -157,7 +166,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               <span className={styles.navItemLeft}>
                 <Gamepad2 size={18} /> Каталог игр
               </span>
-              <span className="badge badgeEmerald">15</span>
+              <span className="badge badgeEmerald">{GAME_CATALOG.length}</span>
             </NavLink>
             <NavLink to="/statistics" className={navClass} onClick={() => playSound('click')}>
               <span className={styles.navItemLeft}>

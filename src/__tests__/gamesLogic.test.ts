@@ -23,8 +23,24 @@ import {
   getPocketColor,
 } from '../games/roulette/rouletteLogic';
 import { createShellRoundPlan, evaluateShellPick } from '../games/shells/shellsLogic';
+import { evaluateSicBoRoll } from '../games/sicBo/sicBoLogic';
 import { evaluateSlotReels } from '../games/slots/slotsLogic';
+import { computeTowerMultiplier, generateTowerMap } from '../games/towers/towersLogic';
 import { computeUpgradeChance, runUpgradeAttempt } from '../games/upgrade/upgradeLogic';
+import { evaluateJacksOrBetter } from '../games/videoPoker/videoPokerLogic';
+import { spinWheelOfFortune } from '../games/wheelOfFortune/wheelOfFortuneLogic';
+import { computeCoinStreakMultiplier, generateCoinSequence } from '../games/coinFlip/coinFlipLogic';
+import {
+  canBeatDurakCard,
+  createDurakMatch,
+  stepDurakBotTurn,
+} from '../games/durak/durakLogic';
+import {
+  createRussianRouletteMatch,
+  resolveRevolverTriggerPull,
+  spinRevolverForFirstTurn,
+} from '../games/russianRoulette/russianRouletteLogic';
+import { generateScratchTicket } from '../games/scratchCards/scratchCardsLogic';
 
 function mkCard(
   rank: Card['rank'],
@@ -232,5 +248,110 @@ describe('All 15 CashUP Game Mechanics & Fair Payouts', () => {
 
     const crash = generateCrashPoint();
     expect(crash).toBeGreaterThanOrEqual(1.0);
+  });
+
+  it('16. Russian Roulette: supports Duel, Alternating (self-only), and Circle of 5 (self-blank keeps turn)', () => {
+    // Alternating mode forces target to shooter and passes turn on blank
+    const altMatch = spinRevolverForFirstTurn(
+      createRussianRouletteMatch('alternating', 1, 'Hero', 'emerald-diamond')
+    ).nextState;
+    const safeAlt = {
+      ...altMatch,
+      currentTurnSeat: 0,
+      chamberIndex: 0,
+      bulletChamber: 4,
+    };
+    const altShot = resolveRevolverTriggerPull(safeAlt, 1); // tries targeting seat 1, enforced to self (0)
+    expect(altShot.firedLive).toBe(false);
+    expect(altShot.nextState.currentTurnSeat).toBe(1); // turn passes in alternating
+
+    // Circle of 5 mode: shooting self on blank keeps the revolver for another turn!
+    const circleMatch = spinRevolverForFirstTurn(
+      createRussianRouletteMatch('circle5', 1, 'Hero', 'emerald-diamond')
+    ).nextState;
+    expect(circleMatch.seats).toHaveLength(5);
+    const safeCircle = {
+      ...circleMatch,
+      currentTurnSeat: 0,
+      chamberIndex: 0,
+      bulletChamber: 5,
+    };
+    const selfBlank = resolveRevolverTriggerPull(safeCircle, 0);
+    expect(selfBlank.firedLive).toBe(false);
+    expect(selfBlank.nextState.currentTurnSeat).toBe(0); // keeps gun!
+
+    // Shooting opponent on blank passes turn clockwise
+    const oppBlank = resolveRevolverTriggerPull(safeCircle, 2);
+    expect(oppBlank.firedLive).toBe(false);
+    expect(oppBlank.nextState.currentTurnSeat).toBe(1);
+  });
+
+  it('17. Durak: 36-card deck, trump beating rules, and fair bot turn execution', () => {
+    const match = createDurakMatch(3, 1, 'Hero', 'emerald-diamond');
+    expect(match.seats).toHaveLength(3);
+    expect(match.seats[0]!.hand).toHaveLength(6);
+    expect(match.deck).toHaveLength(36 - 18);
+
+    expect(canBeatDurakCard(mkCard('10', 'hearts'), mkCard('6', 'spades'), 'spades')).toBe(
+      true
+    );
+    expect(canBeatDurakCard(mkCard('A', 'spades'), mkCard('K', 'spades'), 'spades')).toBe(
+      false
+    );
+
+    // Force bot attacker and verify valid card play
+    const botStart = { ...match, attackerSeat: 1, defenderSeat: 2 };
+    const afterBot = stepDurakBotTurn(botStart);
+    expect(afterBot.tablePairs).toHaveLength(1);
+    expect(afterBot.seats[1]!.hand).toHaveLength(5);
+  });
+
+  it('18–23. Towers, Coin Flip, Wheel of Fortune, Sic Bo, Video Poker, and Scratch Cards', () => {
+    // Towers
+    const towerMap = generateTowerMap('medium');
+    expect(towerMap).toHaveLength(8);
+    expect(towerMap[0]).toHaveLength(2);
+    expect(computeTowerMultiplier('extreme', 4)).toBeGreaterThan(50);
+
+    // Coin Flip
+    const seq = generateCoinSequence(10);
+    expect(seq).toHaveLength(10);
+    expect(computeCoinStreakMultiplier(1)).toBe(1.96);
+
+    // Wheel of Fortune
+    const wof = spinWheelOfFortune([1, 2, 5, 10, 20, 40], 6);
+    expect(wof.won).toBe(true);
+    expect(wof.payout).toBeGreaterThan(0);
+
+    // Sic Bo
+    const tripleSix = evaluateSicBoRoll([6, 6, 6], { type: 'exact-triple', face: 6 }, 1);
+    expect(tripleSix.won).toBe(true);
+    expect(tripleSix.payout).toBe(180);
+    const tripleBeatsBig = evaluateSicBoRoll([5, 5, 5], { type: 'big' }, 1);
+    expect(tripleBeatsBig.won).toBe(false);
+
+    // Video Poker
+    const royalVp = evaluateJacksOrBetter([
+      mkCard('10', 'hearts'),
+      mkCard('J', 'hearts'),
+      mkCard('Q', 'hearts'),
+      mkCard('K', 'hearts'),
+      mkCard('A', 'hearts'),
+    ]);
+    expect(royalVp.rankId).toBe('royal-flush');
+    expect(royalVp.multiplier).toBe(800);
+
+    // Scratch Cards: non-winning tickets never accidentally contain 3 identical symbols
+    for (let i = 0; i < 25; i += 1) {
+      const ticket = generateScratchTicket('royal');
+      expect(ticket.cells).toHaveLength(9);
+      if (!ticket.winningSymbol) {
+        const counts = new Map<string, number>();
+        for (const c of ticket.cells) {
+          counts.set(c.id, (counts.get(c.id) ?? 0) + 1);
+        }
+        expect(Math.max(...counts.values())).toBeLessThan(3);
+      }
+    }
   });
 });

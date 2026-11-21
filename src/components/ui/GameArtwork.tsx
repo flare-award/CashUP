@@ -229,7 +229,6 @@ export const GameArtwork: React.FC<GameArtworkProps> = ({ gameId, className }) =
           </>
         );
       case 'crash':
-      default:
         return (
           <>
             <line x1="68" y1="116" x2="212" y2="116" stroke="#334155" strokeWidth="2" />
@@ -243,6 +242,150 @@ export const GameArtwork: React.FC<GameArtworkProps> = ({ gameId, className }) =
             />
             <circle cx="196" cy="42" r="6" fill="#f59e0b" />
             <text x="132" y="64" fill="#10b981" fontWeight="800" fontSize="18" fontFamily="monospace">x3.84</text>
+          </>
+        );
+      case 'russian-roulette':
+        return (
+          <>
+            <circle cx="94" cy="78" r="38" fill="#1c141a" stroke="#ef4444" strokeWidth="2.2" />
+            {[0, 60, 120, 180, 240, 300].map((deg, idx) => {
+              const rad = (deg * Math.PI) / 180;
+              const cx = 94 + 21 * Math.cos(rad);
+              const cy = 78 + 21 * Math.sin(rad);
+              return (
+                <circle
+                  key={deg}
+                  cx={cx}
+                  cy={cy}
+                  r="7"
+                  fill={idx === 0 ? '#f59e0b' : '#0b0f17'}
+                  stroke={idx === 0 ? '#fef08a' : '#475569'}
+                  strokeWidth="1.5"
+                />
+              );
+            })}
+            <circle cx="94" cy="78" r="5" fill="#64748b" />
+            <g transform="translate(142, 46)">
+              <path d="M12 42 L2 66 Q1 72 9 72 L22 70 L28 48 Z" fill="#7c3f1d" stroke="#f59e0b" strokeWidth="1.5" />
+              <rect x="20" y="28" width="32" height="18" rx="4" fill="#334155" stroke="#94a3b8" strokeWidth="1.5" />
+              <rect x="52" y="30" width="44" height="9" rx="2.5" fill="#64748b" stroke="#e2e8f0" strokeWidth="1.4" />
+              <polygon points="90,30 95,25 96,30" fill="#ef4444" />
+            </g>
+          </>
+        );
+      case 'durak':
+        return (
+          <>
+            <g transform="translate(70, 42) rotate(-18)">
+              <rect width="50" height="74" rx="7" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" />
+              <text x="12" y="20" fill="#dc2626" fontWeight="900" fontSize="14">A</text>
+              <polygon points="25,28 36,41 25,54 14,41" fill="#dc2626" />
+            </g>
+            <g transform="translate(114, 34)">
+              <rect width="52" height="76" rx="7" fill="#f8fafc" stroke="#10b981" strokeWidth="2.2" />
+              <text x="12" y="20" fill="#0f172a" fontWeight="900" fontSize="13">6</text>
+              <circle cx="26" cy="42" r="9" fill="#0f172a" />
+            </g>
+            <g transform="translate(156, 42) rotate(16)">
+              <rect width="50" height="74" rx="7" fill="#162234" stroke="#f59e0b" strokeWidth="2" />
+              <text x="25" y="43" textAnchor="middle" fill="#f59e0b" fontWeight="900" fontSize="13" fontFamily="monospace">36</text>
+            </g>
+          </>
+        );
+      case 'towers':
+        return (
+          <>
+            {[0, 1, 2, 3].map((row) =>
+              [0, 1, 2].map((col) => {
+                const active = (row === 3 && col === 1) || (row === 2 && col === 0) || (row === 1 && col === 2);
+                return (
+                  <rect
+                    key={`${row}-${col}`}
+                    x={86 + col * 38}
+                    y={26 + row * 26}
+                    width="32"
+                    height="20"
+                    rx="5"
+                    fill={active ? '#0f2d22' : '#182232'}
+                    stroke={active ? '#10b981' : '#334155'}
+                    strokeWidth="1.6"
+                  />
+                );
+              })
+            )}
+            <polygon points="140,14 148,24 132,24" fill="#f59e0b" />
+          </>
+        );
+      case 'coin-flip':
+        return (
+          <>
+            <circle cx="116" cy="78" r="38" fill="#f59e0b" stroke="#fef08a" strokeWidth="3" />
+            <path d="M98 90L103 68L112 78L116 64L120 78L129 68L134 90Z" fill="#451a03" />
+            <circle cx="168" cy="78" r="34" fill="#10b981" stroke="#a7f3d0" strokeWidth="2.5" opacity="0.92" />
+            <polygon points="168,58 182,78 168,98 154,78" fill="#022c22" />
+          </>
+        );
+      case 'wheel-of-fortune':
+        return (
+          <>
+            <circle cx="140" cy="78" r="50" fill="#111827" stroke="#f59e0b" strokeWidth="3" />
+            <path d="M140 78 L140 28 A50 50 0 0 1 183 53 Z" fill="#ef4444" />
+            <path d="M140 78 L183 53 A50 50 0 0 1 183 103 Z" fill="#eab308" />
+            <path d="M140 78 L183 103 A50 50 0 0 1 140 128 Z" fill="#3b82f6" />
+            <path d="M140 78 L140 128 A50 50 0 0 1 97 103 Z" fill="#a855f7" />
+            <path d="M140 78 L97 103 A50 50 0 0 1 97 53 Z" fill="#10b981" />
+            <path d="M140 78 L97 53 A50 50 0 0 1 140 28 Z" fill="#f97316" />
+            <circle cx="140" cy="78" r="16" fill="#0f172a" stroke="#fde047" strokeWidth="2" />
+            <text x="140" y="82" textAnchor="middle" fill="#fde047" fontSize="10" fontWeight="900" fontFamily="monospace">40x</text>
+          </>
+        );
+      case 'sic-bo':
+        return (
+          <>
+            {[0, 1, 2].map((i) => (
+              <g key={i} transform={`translate(${66 + i * 52}, ${52 + (i === 1 ? -10 : 4)})`}>
+                <rect width="44" height="44" rx="10" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2" />
+                <circle cx="14" cy="14" r="3.8" fill="#dc2626" />
+                <circle cx="22" cy="22" r="3.8" fill="#0f172a" />
+                <circle cx="30" cy="30" r="3.8" fill="#dc2626" />
+              </g>
+            ))}
+          </>
+        );
+      case 'video-poker':
+        return (
+          <>
+            {['10', 'J', 'Q', 'K', 'A'].map((rk, i) => (
+              <g key={rk} transform={`translate(${54 + i * 35}, 42)`}>
+                <rect width="32" height="58" rx="5" fill="#f8fafc" stroke="#f59e0b" strokeWidth="1.6" />
+                <text x="16" y="26" textAnchor="middle" fill="#dc2626" fontSize="11" fontWeight="900">{rk}</text>
+                <polygon points="16,33 22,41 16,49 10,41" fill="#dc2626" />
+              </g>
+            ))}
+          </>
+        );
+      case 'scratch-cards':
+      default:
+        return (
+          <>
+            <rect x="78" y="28" width="124" height="96" rx="12" fill="#182232" stroke="#f59e0b" strokeWidth="2" />
+            {[0, 1, 2].map((r) =>
+              [0, 1, 2].map((c) => {
+                const open = (r === 0 && c === 0) || (r === 1 && c === 1) || (r === 2 && c === 2);
+                return (
+                  <rect
+                    key={`${r}-${c}`}
+                    x={92 + c * 34}
+                    y={38 + r * 26}
+                    width="28"
+                    height="20"
+                    rx="4"
+                    fill={open ? '#0f2d22' : '#f59e0b'}
+                    opacity={open ? 1 : 0.78}
+                  />
+                );
+              })
+            )}
           </>
         );
     }

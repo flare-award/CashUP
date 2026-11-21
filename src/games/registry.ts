@@ -1,8 +1,10 @@
 import { GameId } from '../types';
 import { BaccaratGame } from './baccarat/BaccaratGame';
 import { BlackjackGame } from './blackjack/BlackjackGame';
+import { CoinFlipGame } from './coinFlip/CoinFlipGame';
 import { CrashGame } from './crash/CrashGame';
 import { DiceGame } from './dice/DiceGame';
+import { DurakGame } from './durak/DurakGame';
 import { HigherLowerGame } from './higherLower/HigherLowerGame';
 import { KenoGame } from './keno/KenoGame';
 import { MinesGame } from './mines/MinesGame';
@@ -11,10 +13,16 @@ import { PokerGame } from './poker/PokerGame';
 import { RedBlackGame } from './redBlack/RedBlackGame';
 import { RiskRouletteGame } from './riskRoulette/RiskRouletteGame';
 import { RouletteGame } from './roulette/RouletteGame';
+import { RussianRouletteGame } from './russianRoulette/RussianRouletteGame';
+import { ScratchCardsGame } from './scratchCards/ScratchCardsGame';
 import { ShellsGame } from './shells/ShellsGame';
+import { SicBoGame } from './sicBo/SicBoGame';
 import { SlotsGame } from './slots/SlotsGame';
+import { TowersGame } from './towers/TowersGame';
 import { GameMetadata } from './types';
 import { UpgradeGame } from './upgrade/UpgradeGame';
+import { VideoPokerGame } from './videoPoker/VideoPokerGame';
+import { WheelOfFortuneGame } from './wheelOfFortune/WheelOfFortuneGame';
 
 export const GAME_CATALOG: readonly GameMetadata[] = [
   {
@@ -397,6 +405,211 @@ export const GAME_CATALOG: readonly GameMetadata[] = [
       { label: 'Высокая орбита x10.0', payout: 'x10.0', probability: '~9.7%' },
     ],
     Component: CrashGame,
+  },
+  {
+    id: 'russian-roulette',
+    title: 'Русская рулетка',
+    shortDescription:
+      'Раскрутите револьвер на столе, чтобы определить первого стрелка! Три режима: Классическая дуэль, Поочерёдная и Круговой стол на 5 игроков.',
+    category: 'arcade-risk',
+    categoryLabel: 'Аркады и риск',
+    maxMultiplierLabel: 'x5.0',
+    maxMultiplierValue: 5,
+    popularityRank: 1,
+    featured: true,
+    recommended: true,
+    minBet: 0.1,
+    rules: [
+      'В начале партии револьвер раскручивается в центре стола: на кого укажет ствол, тот ходит первым. В 6-зарядном барабане находится ровно 1 патрон.',
+      'Режим «Классическая дуэль» (2 игрока): выбор выстрела «В себя» или «В соперника». Холостой в себя сохраняет за вами право следующего выстрела, холостой в соперника передаёт ход.',
+      'Режим «Поочерёдная» (2 игрока): без выбора цели — участники по очереди стреляют строго в самих себя до первого выбывания.',
+      'Режим «Круговой стол» (5 игроков): за столом 5 участников с общим банком x5.0. Если выстрелить в себя и остаться в живых, пистолет оставляют вам ещё на один раз!',
+    ],
+    payoutTable: [
+      { label: 'Классическая дуэль (1 на 1)', payout: 'x2.00', probability: 'Банк двоих участников' },
+      { label: 'Поочерёдная (только в себя)', payout: 'x2.00', probability: '50.0% (3 из 6 камор)' },
+      { label: 'Круговой стол (5 участников)', payout: 'x5.00', probability: 'Весь банк стола' },
+    ],
+    Component: RussianRouletteGame,
+  },
+  {
+    id: 'durak',
+    title: 'Подкидной Дурак',
+    shortDescription:
+      'Легендарная карточная игра колодой в 36 листов с козырем, подбрасыванием и тактическими ботами за столом на 2, 3 или 4 человек.',
+    category: 'cards',
+    categoryLabel: 'Карточные игры',
+    maxMultiplierLabel: 'x3.80',
+    maxMultiplierValue: 3.8,
+    popularityRank: 2,
+    featured: true,
+    recommended: true,
+    minBet: 0.1,
+    rules: [
+      'Используется колода из 36 карт (от Шестёрки до Туза). Каждому сдаётся по 6 карт, нижняя открытая карта задаёт козырную масть. Первым заходит обладатель младшего козыря.',
+      'Атакующий заходит любой картой и может подкидывать карты тех достоинств, которые уже лежат на столе (не более 6 пар и не больше карт на руках у отбивающегося).',
+      'Защищающийся обязан побить каждую карту старшей в масть или козырем, либо забрать стол. Победителем становится тот, кто первым выйдет без карт при пустой колоде.',
+    ],
+    payoutTable: [
+      { label: 'Дуэль (2 игрока)', payout: 'x1.95', probability: 'Победа 1 на 1 (ничья x1.0)' },
+      { label: 'Стол на 3 игроков', payout: 'x2.85', probability: 'Первый вышедший без карт' },
+      { label: 'Стол на 4 игроков', payout: 'x3.80', probability: 'Первый вышедший без карт' },
+    ],
+    Component: DurakGame,
+  },
+  {
+    id: 'towers',
+    title: 'Башня',
+    shortDescription:
+      'Пошаговое восхождение на 8 этажей с четырьмя уровнями сложности и возможностью забрать выигрыш на любой ступени.',
+    category: 'arcade-risk',
+    categoryLabel: 'Аркады и риск',
+    maxMultiplierLabel: 'x6298',
+    maxMultiplierValue: 6298,
+    popularityRank: 5,
+    featured: false,
+    recommended: true,
+    minBet: 0.1,
+    rules: [
+      'Выберите сложность башни: от Лёгкой (3 безопасные ступени из 4) до Экстрима (1 безопасная из 3).',
+      'Поднимайтесь с 1-го по 8-й этаж, открывая по одной плитке на каждом ярусе.',
+      'Забрать накопленный выигрыш можно после любого успешно пройденного этажа.',
+    ],
+    payoutTable: [
+      { label: 'Лёгкий режим (8 этажей)', payout: 'до x9.59', probability: '75% на этаж' },
+      { label: 'Средний режим (8 этажей)', payout: 'до x24.60', probability: '66.7% на этаж' },
+      { label: 'Сложный режим (8 этажей)', payout: 'до x245.76', probability: '50% на этаж' },
+      { label: 'Экстрим (8 этажей)', payout: 'до x6298.56', probability: '33.3% на этаж' },
+    ],
+    Component: TowersGame,
+  },
+  {
+    id: 'coin-flip',
+    title: 'Орёл или Решка',
+    shortDescription:
+      'Трёхмерная золотая монета с накоплением победной серии до 10 бросков подряд и мгновенным кэшаутом после каждого шага.',
+    category: 'arcade-risk',
+    categoryLabel: 'Аркады и риск',
+    maxMultiplierLabel: 'x1003',
+    maxMultiplierValue: 1003.52,
+    popularityRank: 6,
+    featured: false,
+    recommended: true,
+    minBet: 0.1,
+    rules: [
+      'Последовательность выпадений Орла и Решки генерируется криптографически на старте серии.',
+      'Угадайте сторону монеты: первое попадание даёт x1.96, а каждое следующее удваивает коэффициент.',
+      'Вы можете забрать деньги сразу после первого броска или продолжить серию до 10 побед подряд.',
+    ],
+    payoutTable: [
+      { label: '1 бросок', payout: 'x1.96', probability: '50.0%' },
+      { label: '3 броска подряд', payout: 'x7.84', probability: '12.5%' },
+      { label: '5 бросков подряд', payout: 'x31.36', probability: '3.12%' },
+      { label: '10 бросков подряд', payout: 'x1003.52', probability: '0.098%' },
+    ],
+    Component: CoinFlipGame,
+  },
+  {
+    id: 'wheel-of-fortune',
+    title: 'Колесо Фортуны',
+    shortDescription:
+      'Яркое шоу-колесо на 45 секторов со ставками на множители 1, 2, 5, 10, 20 и главный сектор Джекпот 40 (x41).',
+    category: 'roulette-wheels',
+    categoryLabel: 'Рулетка и колёса',
+    maxMultiplierLabel: 'x41',
+    maxMultiplierValue: 41,
+    popularityRank: 7,
+    featured: false,
+    recommended: true,
+    minBet: 0.1,
+    rules: [
+      'Отметьте один или сразу несколько целевых секторов (1, 2, 5, 10, 20 или 40) — общая сумма ставки равномерно распределяется по выбранным номерам.',
+      'Колесо содержит 45 секторов: частые сектора дают стабильный возврат, а единственный красный сектор 40 приносит выплату x41.',
+    ],
+    payoutTable: [
+      { label: 'Сектор 1 / Сектор 2', payout: 'x2 / x3', probability: '21/45 и 12/45' },
+      { label: 'Сектор 5 / Сектор 10', payout: 'x6 / x11', probability: '6/45 и 3/45' },
+      { label: 'Сектор 20', payout: 'x21', probability: '2/45 (4.44%)' },
+      { label: 'Сектор Джекпот 40', payout: 'x41', probability: '1/45 (2.22%)' },
+    ],
+    Component: WheelOfFortuneGame,
+  },
+  {
+    id: 'sic-bo',
+    title: 'Сик Бо: Три кости',
+    shortDescription:
+      'Традиционная игра с тремя кубиками под куполом: ставьте на Малые/Большие суммы, совпадения граней, дубли и точные тройни до x180.',
+    category: 'dice-numbers',
+    categoryLabel: 'Кости и числа',
+    maxMultiplierLabel: 'x180',
+    maxMultiplierValue: 180,
+    popularityRank: 9,
+    featured: false,
+    recommended: false,
+    minBet: 0.1,
+    rules: [
+      'В каждом раунде одновременно бросаются три шестигранные кости (216 равновероятных комбинаций).',
+      'Ставки «Малые (4–10)», «Большие (11–17)» и Чёт/Нечет оплачиваются x2.0 (за исключением выпадения любой тройни).',
+      'Ставка на точную тройню (например, 6-6-6) приносит максимальную выплату x180.',
+    ],
+    payoutTable: [
+      { label: 'Малые (4–10) / Большие (11–17)', payout: 'x2.0', probability: '105/216 (48.61%)' },
+      { label: 'Число на 1 / 2 / 3 костях', payout: 'x2 / x3 / x12', probability: 'До 3 совпадений' },
+      { label: 'Любая тройня (111–666)', payout: 'x31.0', probability: '6/216 (2.78%)' },
+      { label: 'Точная тройня', payout: 'x180.0', probability: '1/216 (0.46%)' },
+    ],
+    Component: SicBoGame,
+  },
+  {
+    id: 'video-poker',
+    title: 'Видеопокер',
+    shortDescription:
+      'Классический 5-карточный автомат Jacks or Better: удерживайте сильные карты, меняйте остальные и собирайте Роял-флеш x800.',
+    category: 'cards',
+    categoryLabel: 'Карточные игры',
+    maxMultiplierLabel: 'x800',
+    maxMultiplierValue: 800,
+    popularityRank: 10,
+    featured: false,
+    recommended: false,
+    minBet: 0.1,
+    rules: [
+      'После сдачи 5 карт нажмите на любые карты, чтобы закрепить их («ОСТАВЛЕНО»).',
+      'Нажмите «Обменять неприкрытые карты» для однократной замены остальных карт из той же перетасованной колоды.',
+      'Выплаты начинаются от пары Валетов и старше (J, Q, K, A) и достигают x800 за Роял-флеш.',
+    ],
+    payoutTable: [
+      { label: 'Роял-флеш / Стрит-флеш', payout: 'x800 / x50', probability: 'Высшие комбинации' },
+      { label: 'Каре / Фулл-хаус', payout: 'x25 / x9', probability: 'Сильная рука' },
+      { label: 'Флеш / Стрит / Сет', payout: 'x6 / x4 / x3', probability: 'Средний ранг' },
+      { label: 'Две пары / Валеты и выше', payout: 'x2 / x1', probability: 'Частый возврат' },
+    ],
+    Component: VideoPokerGame,
+  },
+  {
+    id: 'scratch-cards',
+    title: 'Золотой Скретч',
+    shortDescription:
+      'Мгновенные скретч-билеты 3×3 в трёх сериях: стирайте защитную фольгу по ячейкам или одним касанием и ловите три символа до x500.',
+    category: 'slots',
+    categoryLabel: 'Слоты',
+    maxMultiplierLabel: 'x500',
+    maxMultiplierValue: 500,
+    popularityRank: 11,
+    featured: false,
+    recommended: false,
+    minBet: 0.1,
+    rules: [
+      'Выберите одну из трёх серий билетов (Изумрудный Клевер, Золотой Сейф или Королевский Бриллиант) и купите билет.',
+      'Стирайте защитное покрытие с 9 ячеек кликами (или зажатой кнопкой мыши) либо нажмите «Стереть всё сразу».',
+      'Если на билете открываются 3 одинаковых множителя, приз мгновенно зачисляется на счёт.',
+    ],
+    payoutTable: [
+      { label: 'Изумрудный Клевер', payout: 'x1.2 – x50', probability: 'Частые совпадения' },
+      { label: 'Золотой Сейф', payout: 'x1.5 – x150', probability: 'Средняя волатильность' },
+      { label: 'Королевский Бриллиант', payout: 'x1.5 – x500', probability: 'Главный суперприз' },
+    ],
+    Component: ScratchCardsGame,
   },
 ];
 

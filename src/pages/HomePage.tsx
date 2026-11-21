@@ -13,6 +13,7 @@ import {
 import { PromoShowcase } from '../components/ads/PromoShowcase';
 import { GameCard } from '../components/cards/GameCard';
 import { AvatarIcon } from '../components/ui/AvatarIcon';
+import { LiveHallRibbon } from '../components/ui/LiveHallRibbon';
 import { formatExchangeRateHint } from '../core/currency';
 import { formatNpcEventText } from '../core/npc';
 import { GAME_CATALOG } from '../games/registry';
@@ -30,9 +31,27 @@ export const HomePage: React.FC = () => {
   } = useCashUp();
 
   const popularGames = useMemo(
-    () => GAME_CATALOG.filter((g) => g.featured).slice(0, 6),
+    () =>
+      [...GAME_CATALOG]
+        .filter((g) => g.featured)
+        .sort((a, b) => a.popularityRank - b.popularityRank)
+        .slice(0, 6),
     []
   );
+
+  const newGamesShowcase = useMemo(() => {
+    const newIds = new Set([
+      'russian-roulette',
+      'durak',
+      'towers',
+      'coin-flip',
+      'wheel-of-fortune',
+      'sic-bo',
+      'video-poker',
+      'scratch-cards',
+    ]);
+    return GAME_CATALOG.filter((g) => newIds.has(g.id));
+  }, []);
 
   const recentPlayedGames = useMemo(() => {
     if (!activeProfile || activeProfile.recentGames.length === 0) return [];
@@ -58,78 +77,83 @@ export const HomePage: React.FC = () => {
 
   return (
     <div className={`${styles.page} pageEnter`}>
-      {/* Greeting, CashUP branding, User Balance & Quick Profile/Settings Access */}
-      <section className={styles.hero} aria-label="Приветствие и сводка баланса">
-        <div>
-          <span className="badge badgeEmerald">
-            <ShieldCheck size={13} /> Игровой клуб CashUP · Честный Web Crypto RNG
-          </span>
-          <h1 className={styles.heroTitle}>
-            Привет, {activeProfile?.nickname ?? 'Игрок'}!
-          </h1>
-          <p className={styles.heroDesc}>
-            Исследуйте 15 фирменных игровых залов с единым мультивалютным счётом, мгновенной конвертацией по курсу и сохранением истории в JSON.
-          </p>
-
-          <div className={styles.heroActions}>
-            <Link
-              to="/catalog"
-              onClick={() => playSound('select')}
-              className="btn btnPrimary btnLg"
-            >
-              <Gamepad2 size={18} /> Открыть каталог игр
-            </Link>
-            <Link
-              to="/profile"
-              onClick={() => playSound('click')}
-              className="btn btnSecondary btnLg"
-            >
-              <User size={17} /> Профиль
-            </Link>
-            <Link
-              to="/settings"
-              onClick={() => playSound('click')}
-              className="btn btnSecondary btnLg"
-            >
-              <Settings size={17} /> Настройки
-            </Link>
-          </div>
-        </div>
-
-        <div className={styles.heroBalanceCard}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-              Текущий баланс счёта
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* Greeting, CashUP branding, User Balance & Quick Profile/Settings Access */}
+        <section className={styles.hero} aria-label="Приветствие и сводка баланса">
+          <div>
+            <span className="badge badgeEmerald">
+              <ShieldCheck size={13} /> Игровой клуб CashUP · Честный Web Crypto RNG
             </span>
-            <span className="badge badgeGold">{settings.currency}</span>
+            <h1 className={styles.heroTitle}>
+              Привет, {activeProfile?.nickname ?? 'Игрок'}!
+            </h1>
+            <p className={styles.heroDesc}>
+              Исследуйте {GAME_CATALOG.length} фирменных игровых зала с единым мультивалютным счётом, мгновенной конвертацией по курсу и сохранением истории в JSON.
+            </p>
+
+            <div className={styles.heroActions}>
+              <Link
+                to="/catalog"
+                onClick={() => playSound('select')}
+                className="btn btnPrimary btnLg"
+              >
+                <Gamepad2 size={18} /> Открыть каталог игр
+              </Link>
+              <Link
+                to="/profile"
+                onClick={() => playSound('click')}
+                className="btn btnSecondary btnLg"
+              >
+                <User size={17} /> Профиль
+              </Link>
+              <Link
+                to="/settings"
+                onClick={() => playSound('click')}
+                className="btn btnSecondary btnLg"
+              >
+                <Settings size={17} /> Настройки
+              </Link>
+            </div>
           </div>
 
-          <div className={`${styles.heroBalanceAmount} tabular`}>
-            {formatAmount(activeProfile?.balance ?? 0)}
-          </div>
+          <div className={styles.heroBalanceCard}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                Текущий баланс счёта
+              </span>
+              <span className="badge badgeGold">{settings.currency}</span>
+            </div>
 
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }} className="mono">
-            {formatExchangeRateHint(settings.currency)}
-          </div>
+            <div className={`${styles.heroBalanceAmount} tabular`}>
+              {formatAmount(activeProfile?.balance ?? 0)}
+            </div>
 
-          <div className={styles.quickLinksRow}>
-            <button
-              type="button"
-              className="btn btnSecondary btnSm"
-              onClick={() => exportSave()}
-            >
-              <Download size={14} /> Экспорт сохранения
-            </button>
-            <Link
-              to="/history"
-              onClick={() => playSound('click')}
-              className="btn btnGhost btnSm"
-            >
-              История операций →
-            </Link>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }} className="mono">
+              {formatExchangeRateHint(settings.currency)}
+            </div>
+
+            <div className={styles.quickLinksRow}>
+              <button
+                type="button"
+                className="btn btnSecondary btnSm"
+                onClick={() => exportSave()}
+              >
+                <Download size={14} /> Экспорт сохранения
+              </button>
+              <Link
+                to="/history"
+                onClick={() => playSound('click')}
+                className="btn btnGhost btnSm"
+              >
+                История операций →
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Компактная живая лента выигрышей зала (слева направо при каждом выигрыше) */}
+        <LiveHallRibbon />
+      </div>
 
       {/* Последние сыгранные игры */}
       {recentPlayedGames.length > 0 && (
@@ -153,11 +177,26 @@ export const HomePage: React.FC = () => {
         <div className={styles.sectionHeader}>
           <h2>Популярные игры</h2>
           <Link to="/catalog" className={styles.sectionLink}>
-            Все 15 игр →
+            Все {GAME_CATALOG.length} игр →
           </Link>
         </div>
         <div className={styles.gamesGrid}>
           {popularGames.map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
+        </div>
+      </section>
+
+      {/* Новинки зала */}
+      <section aria-label="Новые игры и режимы">
+        <div className={styles.sectionHeader}>
+          <h2>Новинки и хиты клуба</h2>
+          <Link to="/catalog" className={styles.sectionLink}>
+            Открыть весь каталог →
+          </Link>
+        </div>
+        <div className={styles.gamesGrid}>
+          {newGamesShowcase.map((game) => (
             <GameCard key={game.id} game={game} />
           ))}
         </div>

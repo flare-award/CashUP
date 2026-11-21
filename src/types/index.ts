@@ -33,7 +33,15 @@ export type GameId =
   | 'higher-lower'
   | 'risk-roulette'
   | 'keno'
-  | 'crash';
+  | 'crash'
+  | 'russian-roulette'
+  | 'durak'
+  | 'towers'
+  | 'coin-flip'
+  | 'wheel-of-fortune'
+  | 'sic-bo'
+  | 'video-poker'
+  | 'scratch-cards';
 
 export type GameCategory =
   | 'roulette-wheels'

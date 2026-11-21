@@ -81,7 +81,7 @@ export const CatalogPage: React.FC = () => {
         <div>
           <h1>Каталог игровых залов</h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: 4 }}>
-            Выберите любую игру — все 15 механик подключены к единому мультивалютному счёту.
+            Выберите любую игру — все {GAME_CATALOG.length} механики подключены к единому мультивалютному счёту.
           </p>
         </div>
 
