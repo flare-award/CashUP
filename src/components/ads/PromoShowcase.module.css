@@ -1,0 +1,386 @@
+.sidebarCard {
+  position: relative;
+  border-radius: 16px;
+  padding: 13px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebarCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+}
+
+.bannerCard {
+  position: relative;
+  border-radius: 20px;
+  padding: 18px 22px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 112px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bannerCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+}
+
+/* Soft decorative ambient circle behind product art */
+.glowOrb {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  top: -36px;
+  right: -36px;
+}
+
+/* Top bar: Logo + Ad label + Close X */
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  position: relative;
+  z-index: 2;
+}
+
+.brandMark {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.brandIconWrap {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brandName {
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.topRightControls {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.adPill {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+
+.closeBtn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  opacity: 0.85;
+}
+
+.closeBtn:hover {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+/* Sidebar visual + copy */
+.sidebarVisual {
+  height: 82px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.productTitle {
+  font-size: 0.94rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.quoteText {
+  font-size: 0.76rem;
+  line-height: 1.35;
+  font-style: italic;
+  margin-top: 3px;
+  opacity: 0.94;
+}
+
+/* Price + Discount row */
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  position: relative;
+  z-index: 2;
+}
+
+.priceGroup {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.currentPrice {
+  font-family: var(--font-mono);
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.oldPrice {
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  text-decoration: line-through;
+  opacity: 0.72;
+}
+
+.promoTag {
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* CTA Button ("Перейти на сайт") */
+.ctaButton {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  position: relative;
+  z-index: 2;
+}
+
+.ctaButton:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+/* Dots switcher */
+.dotsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  position: relative;
+  z-index: 2;
+}
+
+.dotBtn {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.2s ease, opacity 0.2s ease;
+  opacity: 0.45;
+}
+
+.dotBtnActive {
+  width: 16px;
+  opacity: 1;
+}
+
+/* Horizontal Banner specifics */
+.bannerArtBox {
+  width: 112px;
+  height: 96px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.bannerCenter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.bannerProductTitle {
+  font-size: 1.18rem;
+  font-weight: 900;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+.bannerQuote {
+  font-size: 0.88rem;
+  font-style: italic;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+.bannerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.bannerCta {
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.bannerCta:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+/* Dismissed compact bar */
+.dismissedBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 11px;
+  border-radius: 10px;
+  background-color: var(--bg-surface-subtle);
+  border: 1px dashed var(--border-subtle);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.dismissedActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dismissedLink {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.73rem;
+  cursor: pointer;
+}
+
+.dismissedLink:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/* Mini Storefront Modal */
+.sitePreviewHero {
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.domainBar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.perksList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.perkCard {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+@media (max-width: 780px) {
+  .bannerCard {
+    grid-template-columns: 84px 1fr;
+    padding: 15px;
+    gap: 14px;
+  }
+
+  .bannerArtBox {
+    width: 84px;
+    height: 84px;
+  }
+
+  .bannerRight {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+  }
+}

@@ -1,0 +1,201 @@
+.boardCard {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.titleGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.subtitle {
+  font-size: 0.81rem;
+  color: var(--text-secondary);
+}
+
+.summaryBadges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 10px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 13px;
+  border-radius: 11px;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.row:hover {
+  transform: translateY(-1px);
+  border-color: var(--border-strong);
+}
+
+:global([data-motion='none']) .row:hover {
+  transform: none;
+}
+
+.rowTopGold {
+  border-color: rgba(245, 158, 11, 0.55);
+  background: linear-gradient(
+    90deg,
+    rgba(245, 158, 11, 0.11) 0%,
+    var(--bg-surface-subtle) 65%
+  );
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08);
+}
+
+.rowTopEmerald {
+  border-color: rgba(16, 185, 129, 0.5);
+  background: linear-gradient(
+    90deg,
+    rgba(16, 185, 129, 0.09) 0%,
+    var(--bg-surface-subtle) 65%
+  );
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  flex: 1;
+}
+
+.rankCircle {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.rankGold {
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  color: #0f172a;
+  border-color: #fde047;
+}
+
+.rankEmerald {
+  background-color: rgba(16, 185, 129, 0.22);
+  color: var(--accent-primary);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.info {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nameLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gameTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.barTrack {
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background-color: var(--bg-elevated);
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.onlineText {
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.roundsText {
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  color: var(--text-muted);
+}
+
+.deltaTag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 5px;
+}
+
+.deltaPositive {
+  background-color: rgba(16, 185, 129, 0.16);
+  color: var(--accent-primary);
+}
+
+.deltaNegative {
+  background-color: rgba(148, 163, 184, 0.14);
+  color: var(--text-muted);
+}
+
+.deltaSame {
+  color: var(--text-muted);
+}

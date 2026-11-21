@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CashUP — Перенаправление...</title>
+    <script>
+      (function () {
+        var path = window.location.pathname;
+        var search = window.location.search || '';
+        var hash = window.location.hash || '';
+        if (window.location.hostname.endsWith('.github.io')) {
+          var parts = path.split('/').filter(Boolean);
+          var repoBase = parts.length > 0 ? '/' + parts[0] + '/' : '/';
+          var subRoute = parts.length > 1 ? '/' + parts.slice(1).join('/') : '/';
+          window.location.replace(repoBase + '#' + subRoute + search + hash);
+        } else {
+          window.location.replace('/#' + path + search + hash);
+        }
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

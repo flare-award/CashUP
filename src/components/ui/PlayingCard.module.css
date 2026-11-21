@@ -1,0 +1,143 @@
+.scene {
+  perspective: 900px;
+  display: inline-block;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.sm {
+  width: 58px;
+  height: 84px;
+}
+
+.md {
+  width: 84px;
+  height: 120px;
+}
+
+.lg {
+  width: 118px;
+  height: 168px;
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 460ms var(--ease-out);
+}
+
+[data-motion='minimal'] .inner {
+  transition-duration: 200ms;
+}
+
+[data-motion='none'] .inner {
+  transition: none;
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+.face,
+.back {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+}
+
+.face {
+  background-color: var(--card-face-bg);
+  border: 1px solid #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 7px 8px;
+}
+
+.sm .face {
+  padding: 5px 6px;
+}
+
+.lg .face {
+  padding: 10px 12px;
+  border-radius: 13px;
+}
+
+.red {
+  color: #dc2626;
+}
+
+.black {
+  color: #0f172a;
+}
+
+.corner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  width: fit-content;
+}
+
+.cornerBottom {
+  align-self: flex-end;
+  transform: rotate(180deg);
+}
+
+.rank {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.98rem;
+  letter-spacing: -0.04em;
+}
+
+.sm .rank {
+  font-size: 0.78rem;
+}
+
+.lg .rank {
+  font-size: 1.32rem;
+}
+
+.centerSuit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.back {
+  transform: rotateY(180deg);
+  background: linear-gradient(145deg, #0d1b24 0%, #102b22 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+.lg .back {
+  border-radius: 13px;
+}
+
+.backPattern {
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: radial-gradient(rgba(16, 185, 129, 0.2) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+.highlighted .face {
+  border: 2px solid var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.28), 0 8px 20px rgba(0, 0, 0, 0.3);
+}
