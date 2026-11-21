@@ -102,7 +102,7 @@ export const GAME_NOMINATIVE_MAP: Record<GameId, string> = {
   dice: 'Кости',
   shells: 'Напёрстки',
   upgrade: 'Апгрейд',
-  poker: 'Холдем',
+  poker: 'Покер',
   blackjack: 'Блэкджек',
   baccarat: 'Баккара',
   plinko: 'Plinko',

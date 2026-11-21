@@ -277,4 +277,40 @@ describe('CashUP End-to-End UI Integration', () => {
       expect(screen.getAllByText(/\$77,50/)[0]).toBeInTheDocument();
     });
   });
+
+  it('highlights Top daily games on Home and plays 8-player Big-Table Poker with chip stacks', async () => {
+    const homeView = renderCashUp('/');
+    fireEvent.change(screen.getByLabelText('Ваш никнейм'), {
+      target: { value: 'PokerShark' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Создать профиль и начать/i }));
+
+    // Daily popularity board & top-1..top-3 highlights are rendered without any fake/simulated wording
+    expect(screen.getByText('Популярные игры у игроков сегодня')).toBeInTheDocument();
+    expect(screen.getAllByText(/ТОП-1 ДНЯ/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByText(/симуляц/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/фейк/i)).not.toBeInTheDocument();
+    homeView.unmount();
+
+    // Open Big-Table 8-Player Poker
+    renderCashUp('/games/poker');
+    expect(screen.getByRole('heading', { level: 1, name: 'Покер' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /8 игроков/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /6 игроков/i })).toBeInTheDocument();
+
+    const dealBtn = screen.getByRole('button', { name: /Раздать карты и фишки/i });
+    fireEvent.click(dealBtn);
+
+    // Either bots folded around or it's user's turn with Fold & All-In controls or round settled
+    const allInBtn = screen.queryByRole('button', { name: /ОЛЛ-ИН/i });
+    if (allInBtn) {
+      fireEvent.click(allInBtn);
+    }
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole('button', { name: /Раздать карты и фишки/i })
+      ).toBeInTheDocument();
+    });
+  });
 });

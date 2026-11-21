@@ -20,7 +20,8 @@ const CATEGORIES: Array<GameCategory | 'all'> = [
 ];
 
 export const CatalogPage: React.FC = () => {
-  const { state, activeProfile, updateUiState, playSound } = useCashUp();
+  const { state, activeProfile, clubPopularity, updateUiState, playSound } =
+    useCashUp();
 
   const [search, setSearch] = useState<string>('');
   const [scope, setScope] = useState<QuickScope>('all');
@@ -37,8 +38,9 @@ export const CatalogPage: React.FC = () => {
       if (scope === 'favorites' && !activeProfile?.favoriteGames.includes(game.id)) {
         return false;
       }
-      if (scope === 'popular' && !game.featured) {
-        return false;
+      if (scope === 'popular') {
+        const rank = clubPopularity.byGameId[game.id]?.rank ?? 99;
+        if (rank > 8) return false;
       }
       if (scope === 'recent' && !activeProfile?.recentGames.includes(game.id)) {
         return false;
@@ -63,9 +65,11 @@ export const CatalogPage: React.FC = () => {
         const rb = activeProfile?.stats.perGame[b.id]?.rounds ?? 0;
         if (rb !== ra) return rb - ra;
       }
-      return a.popularityRank - b.popularityRank;
+      const rankA = clubPopularity.byGameId[a.id]?.rank ?? a.popularityRank;
+      const rankB = clubPopularity.byGameId[b.id]?.rank ?? b.popularityRank;
+      return rankA - rankB;
     });
-  }, [search, scope, category, sortBy, activeProfile]);
+  }, [search, scope, category, sortBy, activeProfile, clubPopularity]);
 
   return (
     <div className="pageEnter" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -154,7 +158,7 @@ export const CatalogPage: React.FC = () => {
               label: `Избранные (${activeProfile?.favoriteGames.length ?? 0})`,
               icon: <Star size={14} />,
             },
-            { id: 'popular', label: 'Популярные', icon: <Flame size={14} /> },
+            { id: 'popular', label: 'Топ сегодня (8)', icon: <Flame size={14} /> },
             {
               id: 'recent',
               label: `Недавно сыгранные (${activeProfile?.recentGames.length ?? 0})`,

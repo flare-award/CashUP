@@ -16,6 +16,10 @@ import {
   settleGameRound,
   updateInteractiveRoundState,
 } from '../core/balance';
+import {
+  ClubDailyReport,
+  computeClubPopularity,
+} from '../core/clubPopularity';
 import { formatCurrency } from '../core/currency';
 import { generateInitialNpcFeed, generateNpcActivity } from '../core/npc';
 import { generateId } from '../core/rng';
@@ -78,6 +82,7 @@ export interface CashUpContextValue {
   toasts: ToastMessage[];
   lastBalanceSignal: BalanceChangeSignal | null;
   prefersReducedMotion: boolean;
+  clubPopularity: ClubDailyReport;
 
   // Profile actions
   createProfile: (
@@ -146,10 +151,23 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [lastBalanceSignal, setLastBalanceSignal] = useState<BalanceChangeSignal | null>(null);
+  const [livePulseTick, setLivePulseTick] = useState<number>(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return false;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setLivePulseTick((t) => t + 1);
+    }, 18_000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const clubPopularity = useMemo(
+    () => computeClubPopularity(new Date(), livePulseTick),
+    [livePulseTick]
+  );
 
   const commitState = useCallback((next: CashUpSaveData) => {
     stateRef.current = next;
@@ -720,6 +738,7 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       toasts,
       lastBalanceSignal,
       prefersReducedMotion,
+      clubPopularity,
       createProfile,
       switchProfile,
       updateProfile,
@@ -750,6 +769,7 @@ export const CashUpProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       toasts,
       lastBalanceSignal,
       prefersReducedMotion,
+      clubPopularity,
       createProfile,
       switchProfile,
       updateProfile,

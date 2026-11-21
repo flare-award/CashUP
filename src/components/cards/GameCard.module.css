@@ -1,4 +1,5 @@
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-surface);
@@ -18,8 +19,70 @@
   box-shadow: var(--shadow-md);
 }
 
-[data-motion='none'] .card:hover {
+:global([data-motion='none']) .card:hover {
   transform: none;
+}
+
+/* Highlighted Top-1..Top-3 Games of Today */
+.cardTopGold {
+  border-color: rgba(245, 158, 11, 0.65);
+  box-shadow:
+    0 0 0 1px rgba(245, 158, 11, 0.28),
+    0 10px 28px rgba(245, 158, 11, 0.14);
+  background: linear-gradient(
+    180deg,
+    rgba(245, 158, 11, 0.07) 0%,
+    var(--bg-surface) 44%
+  );
+}
+
+.cardTopGold::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b 0%, #fde047 50%, #10b981 100%);
+  z-index: 4;
+}
+
+.cardTopGold:hover {
+  border-color: #f59e0b;
+  box-shadow:
+    0 0 0 1.5px rgba(245, 158, 11, 0.5),
+    0 14px 32px rgba(245, 158, 11, 0.22);
+}
+
+/* Highlighted Top-4..Top-5 Games of Today */
+.cardTopEmerald {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow:
+    0 0 0 1px rgba(16, 185, 129, 0.22),
+    0 10px 26px rgba(16, 185, 129, 0.12);
+  background: linear-gradient(
+    180deg,
+    rgba(16, 185, 129, 0.06) 0%,
+    var(--bg-surface) 44%
+  );
+}
+
+.cardTopEmerald::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  z-index: 4;
+}
+
+.cardTopEmerald:hover {
+  border-color: #10b981;
+  box-shadow:
+    0 0 0 1.5px rgba(16, 185, 129, 0.45),
+    0 14px 30px rgba(16, 185, 129, 0.18);
 }
 
 .artWrap {
@@ -28,6 +91,40 @@
   background-color: #0d131d;
   border-bottom: 1px solid var(--border-subtle);
   overflow: hidden;
+}
+
+.topRankBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(5px);
+  z-index: 3;
+}
+
+.badgeGoldGlow {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);
+}
+
+.badgeEmeraldGlow {
+  background: rgba(16, 185, 129, 0.92);
+  color: #022c22;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.badgeRising {
+  background-color: rgba(15, 23, 42, 0.85);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.45);
 }
 
 .favBtn {
@@ -44,6 +141,7 @@
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(4px);
+  z-index: 3;
   transition: color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
 
@@ -64,11 +162,35 @@
   padding: 3px 8px;
   border-radius: 6px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  background-color: rgba(11, 14, 20, 0.78);
+  background-color: rgba(11, 14, 20, 0.8);
   color: #10b981;
   border: 1px solid rgba(16, 185, 129, 0.32);
+}
+
+.onlinePill {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  font-weight: 700;
+  background-color: rgba(11, 14, 20, 0.8);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.onlineDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10b981;
 }
 
 .content {
@@ -87,16 +209,29 @@
 }
 
 .catLabel {
-  font-size: 0.74rem;
+  font-size: 0.73rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.playedCount {
-  font-size: 0.75rem;
+.rankHint {
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  font-weight: 700;
   color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.deltaUp {
+  color: var(--accent-primary);
+}
+
+.deltaDown {
+  color: var(--text-muted);
 }
 
 .title {
@@ -106,7 +241,7 @@
 }
 
 .desc {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
   line-height: 1.45;
   flex: 1;

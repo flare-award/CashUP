@@ -37,7 +37,7 @@ const SHORT_GAME_NAMES: Record<GameId, string> = {
   dice: 'Кости',
   shells: 'Напёрстки',
   upgrade: 'Апгрейд',
-  poker: 'Покер Hold’em',
+  poker: 'Покер',
   blackjack: 'Блэкджек',
   baccarat: 'Баккара',
   plinko: 'Plinko',

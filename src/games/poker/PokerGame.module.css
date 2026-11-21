@@ -1,99 +1,206 @@
-.tableFelt {
-  background: radial-gradient(ellipse at center, #143829 0%, #0b2017 75%, #07150f 100%);
-  border: 3px solid #264a3a;
-  border-radius: 26px;
-  padding: 22px;
-  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.45), var(--shadow-md);
+.wrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
-.botsRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.topControlStrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
   gap: 12px;
+  padding: 12px 16px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
 }
 
-@media (max-width: 760px) {
-  .botsRow {
-    grid-template-columns: 1fr;
-  }
-}
-
-.botSeat {
-  background-color: rgba(11, 16, 24, 0.76);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: 12px;
+/* Big Oval Casino Poker Table */
+.ovalArena {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 48%, #184a36 0%, #0e2e21 62%, #081c14 100%);
+  border: 10px solid #2b1d16;
+  outline: 2px solid rgba(245, 158, 11, 0.35);
+  border-radius: 46px;
+  padding: 22px 20px;
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.65),
+    inset 0 0 0 3px rgba(245, 158, 11, 0.22),
+    0 18px 44px rgba(0, 0, 0, 0.45);
   display: flex;
   flex-direction: column;
+  gap: 18px;
+}
+
+.opponentsRing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
   gap: 10px;
-  transition: opacity var(--dur-normal) ease, border-color var(--dur-fast) ease;
 }
 
-.botFolded {
-  opacity: 0.48;
+.seatCard {
+  position: relative;
+  background-color: rgba(11, 16, 25, 0.86);
+  border: 1.5px solid rgba(148, 163, 184, 0.22);
+  border-radius: 14px;
+  padding: 10px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition:
+    opacity 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
 }
 
-.botWinner {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35);
+.seatFolded {
+  opacity: 0.44;
 }
 
-.botHeader {
+.seatAllIn {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.28);
+}
+
+.seatWinner {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 2.5px rgba(245, 158, 11, 0.45), 0 0 22px rgba(245, 158, 11, 0.25);
+  transform: translateY(-2px);
+}
+
+.seatTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.seatIdentity {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.seatName {
+  font-size: 0.81rem;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seatStyle {
+  font-size: 0.67rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.posPills {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.dealerBtn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fef08a, #f59e0b);
+  color: #0f172a;
+  font-size: 0.66rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.blindBadge {
+  padding: 1px 5px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 800;
+  background-color: rgba(59, 130, 246, 0.24);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.seatMidRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
 
-.botIdentity {
+.miniCards {
+  display: flex;
+  gap: 4px;
+}
+
+.stackBlock {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 0;
+  gap: 5px;
+  background-color: rgba(15, 23, 42, 0.78);
+  padding: 4px 7px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 158, 11, 0.24);
 }
 
-.botName {
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: #f8fafc;
+.stackAmount {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: #fde68a;
 }
 
-.botStyle {
-  font-size: 0.72rem;
-  color: #94a3b8;
+.seatBottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 0.71rem;
 }
 
-.actionTag {
-  padding: 3px 8px;
+.actionPill {
+  padding: 2px 7px;
   border-radius: 999px;
-  font-size: 0.73rem;
   font-weight: 700;
   background-color: rgba(16, 185, 129, 0.2);
   color: #6ee7b7;
-  white-space: nowrap;
 }
 
-.botCards {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.actionPillFold {
+  background-color: rgba(148, 163, 184, 0.14);
+  color: #94a3b8;
 }
 
-.communityCenter {
+.actionPillAllIn {
+  background-color: rgba(239, 68, 68, 0.28);
+  color: #fca5a5;
+}
+
+/* Center Felt: Pot Chip Mountain & 5 Community Cards */
+.centerFelt {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 16px 10px;
-  border-radius: 18px;
-  background-color: rgba(6, 12, 9, 0.42);
-  border: 1px dashed rgba(16, 185, 129, 0.28);
+  gap: 14px;
+  padding: 18px 14px;
+  border-radius: 28px;
+  background-color: rgba(5, 16, 11, 0.46);
+  border: 1.5px dashed rgba(245, 158, 11, 0.3);
 }
 
-.potRow {
+.potBanner {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -101,83 +208,129 @@
   justify-content: center;
 }
 
-.potBadge {
-  padding: 6px 16px;
-  border-radius: 999px;
-  background-color: rgba(245, 158, 11, 0.18);
-  border: 1px solid rgba(245, 158, 11, 0.45);
-  color: #fde68a;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  font-size: 0.96rem;
-}
-
-.streetBadge {
+.streetTag {
   padding: 5px 12px;
   border-radius: 999px;
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #cbd5e1;
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  font-size: 0.76rem;
+  font-weight: 800;
   letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-.boardCards {
+.potChipBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.24), rgba(16, 185, 129, 0.18));
+  border: 1.5px solid rgba(245, 158, 11, 0.55);
+  color: #fef08a;
+  font-family: var(--font-mono);
+  font-size: 1.02rem;
+  font-weight: 900;
+}
+
+.boardRow {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 9px;
   flex-wrap: wrap;
-  min-height: 120px;
+  min-height: 118px;
 }
 
-.emptySlot {
-  width: 84px;
-  height: 120px;
+.emptyCardSlot {
+  width: 82px;
+  height: 116px;
   border-radius: 10px;
   border: 1.5px dashed rgba(255, 255, 255, 0.16);
   background-color: rgba(255, 255, 255, 0.03);
 }
 
-.playerArea {
-  background-color: rgba(11, 16, 24, 0.82);
-  border: 1px solid rgba(16, 185, 129, 0.35);
-  border-radius: 16px;
+/* Player Hero Station at Bottom of Oval Table */
+.heroSeat {
+  background-color: rgba(11, 16, 25, 0.9);
+  border: 1.5px solid rgba(16, 185, 129, 0.45);
+  border-radius: 20px;
   padding: 16px 18px;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
   align-items: center;
-  justify-content: space-between;
-  gap: 18px;
 }
 
-.playerHandBlock {
+@media (max-width: 860px) {
+  .heroSeat {
+    grid-template-columns: 1fr;
+  }
+}
+
+.heroLeft {
   display: flex;
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
 }
 
-.actionControls {
+.heroControls {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  flex: 1;
-  min-width: 260px;
+  align-items: flex-end;
 }
 
-.actionBtns {
+@media (max-width: 860px) {
+  .heroControls {
+    align-items: stretch;
+  }
+}
+
+.mainActionRow {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
 }
 
-.raiseRow {
+.chipSizingRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  gap: 6px;
   justify-content: flex-end;
-  gap: 8px;
-  flex-wrap: wrap;
+}
+
+.pokerChipBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 800;
+  background-color: rgba(30, 41, 59, 0.92);
+  color: #f8fafc;
+  border: 1.5px dashed #f59e0b;
+  transition: transform 130ms ease, background-color 130ms ease;
+}
+
+.pokerChipBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background-color: rgba(245, 158, 11, 0.22);
+}
+
+.allInBtn {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 55%, #f59e0b 100%);
+  color: #fff;
+  font-weight: 900;
+  border: 1px solid #fca5a5;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.38);
+}
+
+.allInBtn:hover:not(:disabled) {
+  filter: brightness(1.08);
 }

@@ -94,14 +94,42 @@ export const GameArtwork: React.FC<GameArtworkProps> = ({ gameId, className }) =
       case 'poker':
         return (
           <>
-            <ellipse cx="140" cy="84" rx="82" ry="42" fill="#0d291f" stroke="#10b981" strokeWidth="2" />
-            <rect x="92" y="54" width="28" height="40" rx="4" fill="#f8fafc" />
-            <rect x="126" y="54" width="28" height="40" rx="4" fill="#f8fafc" />
-            <rect x="160" y="54" width="28" height="40" rx="4" fill="#f8fafc" />
-            <text x="106" y="79" textAnchor="middle" fill="#dc2626" fontWeight="800" fontSize="14">A</text>
-            <text x="140" y="79" textAnchor="middle" fill="#0f172a" fontWeight="800" fontSize="14">K</text>
-            <text x="174" y="79" textAnchor="middle" fill="#dc2626" fontWeight="800" fontSize="14">Q</text>
-            <circle cx="140" cy="112" r="10" fill="#f59e0b" stroke="#fef3c7" strokeWidth="2" strokeDasharray="3 3" />
+            {/* Outer mahogany rim + emerald felt oval */}
+            <ellipse cx="140" cy="78" rx="102" ry="52" fill="#2b1d16" stroke="#f59e0b" strokeWidth="1.5" />
+            <ellipse cx="140" cy="78" rx="92" ry="43" fill="#133b2b" stroke="#10b981" strokeWidth="1.5" />
+            {/* 8 seat dots around big oval table */}
+            {[
+              [48, 56],
+              [84, 32],
+              [140, 28],
+              [196, 32],
+              [232, 56],
+              [232, 100],
+              [196, 124],
+              [84, 124],
+            ].map(([sx, sy], i) => (
+              <circle key={i} cx={sx} cy={sy} r="5.5" fill="#0f172a" stroke="#94a3b8" strokeWidth="1.4" />
+            ))}
+            {/* Center community cards */}
+            <rect x="86" y="56" width="24" height="34" rx="3.5" fill="#f8fafc" />
+            <rect x="114" y="56" width="24" height="34" rx="3.5" fill="#f8fafc" />
+            <rect x="142" y="56" width="24" height="34" rx="3.5" fill="#f8fafc" />
+            <text x="98" y="78" textAnchor="middle" fill="#dc2626" fontWeight="900" fontSize="12">A</text>
+            <text x="126" y="78" textAnchor="middle" fill="#0f172a" fontWeight="900" fontSize="12">K</text>
+            <text x="154" y="78" textAnchor="middle" fill="#dc2626" fontWeight="900" fontSize="12">Q</text>
+            {/* Poker chip stacks on felt */}
+            {[0, 1, 2, 3].map((lvl) => (
+              <ellipse
+                key={lvl}
+                cx="188"
+                cy={84 - lvl * 4}
+                rx="11"
+                ry="4.5"
+                fill={lvl % 2 === 0 ? '#f59e0b' : '#ef4444'}
+                stroke="#fef08a"
+                strokeWidth="1"
+              />
+            ))}
           </>
         );
       case 'blackjack':

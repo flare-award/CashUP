@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Award, BarChart3, Flame, TrendingDown, TrendingUp } from 'lucide-react';
+import { ClubPopularityBoard } from '../components/ui/ClubPopularityBoard';
 import { STARTER_BALANCE } from '../core/balance';
 import { formatSignedCurrency, roundCurrency } from '../core/currency';
 import { getGameById } from '../games/registry';
@@ -229,6 +230,9 @@ export const StatisticsPage: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Статистика популярных игр среди пользователей клуба за сутки */}
+      <ClubPopularityBoard limit={12} />
 
       {/* KPI Metrics Grid */}
       <div

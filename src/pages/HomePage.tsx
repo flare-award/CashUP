@@ -13,6 +13,7 @@ import {
 import { PromoShowcase } from '../components/ads/PromoShowcase';
 import { GameCard } from '../components/cards/GameCard';
 import { AvatarIcon } from '../components/ui/AvatarIcon';
+import { ClubPopularityBoard } from '../components/ui/ClubPopularityBoard';
 import { LiveHallRibbon } from '../components/ui/LiveHallRibbon';
 import { formatExchangeRateHint } from '../core/currency';
 import { formatNpcEventText } from '../core/npc';
@@ -25,6 +26,7 @@ export const HomePage: React.FC = () => {
     state,
     activeProfile,
     settings,
+    clubPopularity,
     formatAmount,
     exportSave,
     playSound,
@@ -33,10 +35,13 @@ export const HomePage: React.FC = () => {
   const popularGames = useMemo(
     () =>
       [...GAME_CATALOG]
-        .filter((g) => g.featured)
-        .sort((a, b) => a.popularityRank - b.popularityRank)
+        .sort(
+          (a, b) =>
+            (clubPopularity.byGameId[a.id]?.rank ?? 99) -
+            (clubPopularity.byGameId[b.id]?.rank ?? 99)
+        )
         .slice(0, 6),
-    []
+    [clubPopularity]
   );
 
   const newGamesShowcase = useMemo(() => {
@@ -173,9 +178,9 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* Популярные игры */}
-      <section aria-label="Популярные игры">
+      <section aria-label="Топ популярных игр сегодня">
         <div className={styles.sectionHeader}>
-          <h2>Популярные игры</h2>
+          <h2>Топ игр среди игроков сегодня</h2>
           <Link to="/catalog" className={styles.sectionLink}>
             Все {GAME_CATALOG.length} игр →
           </Link>
@@ -186,6 +191,9 @@ export const HomePage: React.FC = () => {
           ))}
         </div>
       </section>
+
+      {/* Ежедневная статистика популярности игр в клубе */}
+      <ClubPopularityBoard limit={8} />
 
       {/* Новинки зала */}
       <section aria-label="Новые игры и режимы">

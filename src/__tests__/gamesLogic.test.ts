@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Card, rankToValue } from '../core/cards';
+import { computeClubPopularity } from '../core/clubPopularity';
 import { dealBaccaratRound, shouldBankerDrawThird } from '../games/baccarat/baccaratLogic';
 import {
   canSplitHand,
@@ -353,5 +354,39 @@ describe('All 15 CashUP Game Mechanics & Fair Payouts', () => {
         expect(Math.max(...counts.values())).toBeLessThan(3);
       }
     }
+  });
+
+  it('Daily Club Popularity: shifts gradually day-to-day while keeping core flagship games competitive', () => {
+    const day1 = computeClubPopularity(new Date('2026-11-12T12:00:00Z'), 0);
+    const day2 = computeClubPopularity(new Date('2026-11-13T12:00:00Z'), 0);
+    const day7 = computeClubPopularity(new Date('2026-11-19T12:00:00Z'), 0);
+
+    expect(day1.rankings).toHaveLength(23);
+    expect(day1.rankings[0]!.tier).toBe('top3');
+    expect(day1.rankings[3]!.tier).toBe('top5');
+
+    // Gradual daily evolution: mean rank displacement on consecutive days is small (< 3.5 places)
+    let totalShift = 0;
+    for (const entry of day2.rankings) {
+      const prevRank = day1.byGameId[entry.gameId].rank;
+      expect(entry.yesterdayRank).toBe(prevRank);
+      expect(entry.rankDelta).toBe(prevRank - entry.rank);
+      totalShift += Math.abs(entry.rank - prevRank);
+    }
+    const meanShift = totalShift / 23;
+    expect(meanShift).toBeLessThan(3.5);
+
+    // Over a week, rankings do evolve (not completely frozen)
+    let weekChanges = 0;
+    for (const entry of day7.rankings) {
+      if (entry.rank !== day1.byGameId[entry.gameId].rank) {
+        weekChanges += 1;
+      }
+    }
+    expect(weekChanges).toBeGreaterThanOrEqual(6);
+
+    // Flagship Poker stays among the top games
+    expect(day1.byGameId.poker.rank).toBeLessThanOrEqual(5);
+    expect(day2.byGameId.poker.rank).toBeLessThanOrEqual(5);
   });
 });
